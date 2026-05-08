@@ -155,7 +155,7 @@ function renderHome() {
               <strong>DeepSeek</strong>
               <strong>Kimi</strong>
               <strong>MiniMax</strong>
-              <strong>Doubao</strong>
+              <strong>Qwen</strong>
             </div>
             <div>
               <span>Powered by</span>

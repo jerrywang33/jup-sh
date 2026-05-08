@@ -126,7 +126,7 @@ Codex
 DeepSeek
 Kimi
 MiniMax
-Doubao
+Qwen
 ```
 
 ## 5. Product Layer
