@@ -49,6 +49,7 @@ V1 includes:
 - A Risk Review prototype.
 - A static product shell for the current positioning.
 - Product notes in `docs/product.md`.
+- Jupiter quote-only design in `docs/jupiter-quote-design.md`.
 - X / Twitter content notes in `docs/x-content.md`.
 
 Current demo command:
@@ -62,6 +63,15 @@ Run the local CLI from source:
 ```bash
 npm run cli -- pay --agent claude --token SOL --settle 20 USDC
 ```
+
+Use a real Jupiter quote without signing or executing a payment:
+
+```bash
+npm run cli -- pay --agent claude --token SOL --settle 20 USDC --quote-provider jupiter
+```
+
+The default quote provider is `mock`. Set `JUPITER_API_KEY` or pass
+`--jupiter-api-key` if the Jupiter endpoint requires an API key.
 
 The command saves the generated intent locally:
 

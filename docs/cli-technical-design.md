@@ -122,6 +122,10 @@ Options:
 | `--recipient` | no | Recipient address or label. Unknown recipients trigger review by default. |
 | `--reference` | no | External reference or memo. |
 | `--json` | no | Print JSON only. |
+| `--quote-provider` | no | `mock` by default. Use `jupiter` for quote-only real routing. |
+| `--jupiter-quote-url` | no | Defaults to Jupiter Swap quote API. |
+| `--jupiter-api-key` | no | Optional API key. Defaults to `JUPITER_API_KEY` when set. |
+| `--slippage-bps` | no | Slippage tolerance for Jupiter quotes. Defaults to `50`. |
 | `--review-base-url` | no | Defaults to `https://jup.sh`. |
 | `--store` | no | Intent storage directory. Defaults to `.jup-sh/intents`. |
 
@@ -257,9 +261,9 @@ Policy checks are returned as structured entries:
 
 ### quote_settlement
 
-Phase 1 uses a `SettlementQuoter` boundary. The CLI injects
-`MockSettlementQuoter`, which uses fixed mock prices for local development. The
-shape should resemble a future Jupiter quote, but the data is not real.
+Phase 1 uses a `SettlementQuoter` boundary. The CLI uses `MockSettlementQuoter`
+by default, which keeps local development and tests stable. It can also use a
+quote-only `JupiterSettlementQuoter` through `--quote-provider jupiter`.
 
 The boundary is intentionally small:
 
@@ -285,14 +289,17 @@ Example:
 }
 ```
 
-Future replacement:
+Current provider path:
 
 ```txt
-MockSettlementQuoter -> JupiterSettlementQuoter
+MockSettlementQuoter by default
+JupiterSettlementQuoter when explicitly requested
 ```
 
-The intent and policy code should not need to change when real Jupiter quoting is
-introduced.
+The intent and policy code does not need to change when the quote provider
+changes.
+
+Jupiter quote-only details live in `docs/jupiter-quote-design.md`.
 
 ## 7. Local Intent Store
 

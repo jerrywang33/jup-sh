@@ -14,6 +14,8 @@ pub enum JupShError {
     UnsupportedSettlementToken,
     #[error("no mock quote price for token {0}")]
     MissingMockPrice(String),
+    #[error("external quote failed: {0}")]
+    ExternalQuote(String),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

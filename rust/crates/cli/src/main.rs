@@ -1,9 +1,11 @@
 use clap::{Parser, Subcommand};
 use jup_sh_core::{
     CreatePaymentIntentInput, Decision, IntentStatus, MockSettlementQuoter, NextAction,
-    PaymentIntent, Policy, PolicyCheckStatus, RiskLevel, create_payment_intent_with_quoter,
+    PaymentIntent, Policy, PolicyCheckStatus, RiskLevel, SettlementQuote, SettlementQuoter,
+    create_payment_intent_with_quoter,
 };
-use std::{fs, path::PathBuf};
+use serde::Deserialize;
+use std::{fs, path::PathBuf, time::Duration};
 
 #[derive(Debug, Parser)]
 #[command(name = "jup-sh")]
@@ -47,6 +49,22 @@ struct PayCommand {
     #[arg(long)]
     json: bool,
 
+    /// Settlement quote provider. Use mock for local development or jupiter for quote-only real routing.
+    #[arg(long, default_value = "mock", value_enum)]
+    quote_provider: QuoteProvider,
+
+    /// Jupiter quote endpoint. Defaults to Jupiter Swap quote API.
+    #[arg(long, default_value = "https://api.jup.ag/swap/v1/quote")]
+    jupiter_quote_url: String,
+
+    /// Slippage tolerance in basis points for Jupiter quotes.
+    #[arg(long, default_value_t = 50)]
+    slippage_bps: u16,
+
+    /// Optional Jupiter API key. Defaults to JUPITER_API_KEY when set.
+    #[arg(long, env = "JUPITER_API_KEY")]
+    jupiter_api_key: Option<String>,
+
     /// Base URL for Risk Review links.
     #[arg(long, default_value = "https://jup.sh")]
     review_base_url: String,
@@ -58,6 +76,12 @@ struct PayCommand {
     /// Intent storage directory.
     #[arg(long)]
     store: Option<PathBuf>,
+}
+
+#[derive(Debug, Clone, Copy, clap::ValueEnum)]
+enum QuoteProvider {
+    Mock,
+    Jupiter,
 }
 
 #[derive(Debug, Parser)]
@@ -134,20 +158,30 @@ fn run_pay(command: PayCommand) -> Result<(), Box<dyn std::error::Error>> {
         .ok_or("--settle requires amount and token")?
         .clone();
 
-    let quoter = MockSettlementQuoter;
-    let intent = create_payment_intent_with_quoter(
-        CreatePaymentIntentInput {
-            agent: command.agent,
-            pay_token: command.token,
-            settle_amount,
-            settle_token,
-            recipient: command.recipient,
-            reference: command.reference,
-        },
-        &policy,
-        &command.review_base_url,
-        &quoter,
-    )?;
+    let input = CreatePaymentIntentInput {
+        agent: command.agent,
+        pay_token: command.token,
+        settle_amount,
+        settle_token,
+        recipient: command.recipient,
+        reference: command.reference,
+    };
+    let intent = match command.quote_provider {
+        QuoteProvider::Mock => create_payment_intent_with_quoter(
+            input,
+            &policy,
+            &command.review_base_url,
+            &MockSettlementQuoter,
+        )?,
+        QuoteProvider::Jupiter => {
+            let quoter = JupiterSettlementQuoter::new(
+                command.jupiter_quote_url,
+                command.jupiter_api_key,
+                command.slippage_bps,
+            )?;
+            create_payment_intent_with_quoter(input, &policy, &command.review_base_url, &quoter)?
+        }
+    };
     let path = save_intent(&intent, command.store.as_ref())?;
 
     if command.json {
@@ -367,4 +401,155 @@ fn trim_number(value: f64) -> String {
     } else {
         value.to_string()
     }
+}
+
+#[derive(Debug)]
+struct JupiterSettlementQuoter {
+    client: reqwest::blocking::Client,
+    quote_url: String,
+    api_key: Option<String>,
+    slippage_bps: u16,
+}
+
+impl JupiterSettlementQuoter {
+    fn new(
+        quote_url: String,
+        api_key: Option<String>,
+        slippage_bps: u16,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let client = reqwest::blocking::Client::builder()
+            .timeout(Duration::from_secs(20))
+            .user_agent("jup-sh-cli/0.1.0")
+            .build()?;
+
+        Ok(Self {
+            client,
+            quote_url,
+            api_key: api_key.filter(|value| !value.trim().is_empty()),
+            slippage_bps,
+        })
+    }
+}
+
+impl SettlementQuoter for JupiterSettlementQuoter {
+    fn quote_settlement(
+        &self,
+        input: &CreatePaymentIntentInput,
+    ) -> Result<SettlementQuote, jup_sh_core::JupShError> {
+        quote_jupiter_settlement(self, input)
+            .map_err(|error| jup_sh_core::JupShError::ExternalQuote(error.to_string()))
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct JupiterQuoteResponse {
+    in_amount: String,
+    out_amount: String,
+    input_mint: String,
+    output_mint: String,
+    price_impact_pct: String,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct TokenMetadata {
+    symbol: &'static str,
+    mint: &'static str,
+    decimals: u8,
+}
+
+fn quote_jupiter_settlement(
+    quoter: &JupiterSettlementQuoter,
+    input: &CreatePaymentIntentInput,
+) -> Result<SettlementQuote, Box<dyn std::error::Error>> {
+    let input_token = token_metadata(&input.pay_token)
+        .ok_or_else(|| format!("Jupiter quote token is not configured: {}", input.pay_token))?;
+    let settle_token = token_metadata(&input.settle_token).ok_or_else(|| {
+        format!(
+            "Jupiter quote token is not configured: {}",
+            input.settle_token
+        )
+    })?;
+    if settle_token.symbol != "USDC" {
+        return Err("Jupiter quote provider currently supports USDC settlement only".into());
+    }
+
+    let out_amount_raw = to_raw_amount(input.settle_amount, settle_token.decimals)?;
+    let slippage_bps = quoter.slippage_bps.to_string();
+    let mut request = quoter.client.get(&quoter.quote_url).query(&[
+        ("inputMint", input_token.mint),
+        ("outputMint", settle_token.mint),
+        ("amount", out_amount_raw.as_str()),
+        ("slippageBps", slippage_bps.as_str()),
+        ("swapMode", "ExactOut"),
+    ]);
+
+    if let Some(api_key) = &quoter.api_key {
+        request = request.header("x-api-key", api_key);
+    }
+
+    let response = request.send()?.error_for_status()?;
+    let quote = response.json::<JupiterQuoteResponse>()?;
+
+    if quote.input_mint != input_token.mint {
+        return Err("Jupiter quote returned a different input mint".into());
+    }
+    if quote.output_mint != settle_token.mint {
+        return Err("Jupiter quote returned a different output mint".into());
+    }
+
+    Ok(SettlementQuote {
+        source: "jupiter_swap_exact_out".to_string(),
+        input_token: input_token.symbol.to_string(),
+        input_amount: from_raw_amount(&quote.in_amount, input_token.decimals)?,
+        settle_amount: from_raw_amount(&quote.out_amount, settle_token.decimals)?,
+        settle_token: settle_token.symbol.to_string(),
+        price_impact_bps: price_impact_bps(&quote.price_impact_pct)?,
+    })
+}
+
+fn token_metadata(symbol: &str) -> Option<TokenMetadata> {
+    match symbol.trim().to_uppercase().as_str() {
+        "SOL" => Some(TokenMetadata {
+            symbol: "SOL",
+            mint: "So11111111111111111111111111111111111111112",
+            decimals: 9,
+        }),
+        "USDC" => Some(TokenMetadata {
+            symbol: "USDC",
+            mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            decimals: 6,
+        }),
+        "JUP" => Some(TokenMetadata {
+            symbol: "JUP",
+            mint: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+            decimals: 6,
+        }),
+        "BONK" => Some(TokenMetadata {
+            symbol: "BONK",
+            mint: "DezXAZ8z7PnrnRJjz3my2u6r5KiL3HR8APpPB2634B2",
+            decimals: 5,
+        }),
+        _ => None,
+    }
+}
+
+fn to_raw_amount(amount: f64, decimals: u8) -> Result<String, Box<dyn std::error::Error>> {
+    if !amount.is_finite() || amount <= 0.0 {
+        return Err("amount must be positive".into());
+    }
+
+    let multiplier = 10_u64.pow(u32::from(decimals)) as f64;
+    Ok(format!("{:.0}", (amount * multiplier).round()))
+}
+
+fn from_raw_amount(raw: &str, decimals: u8) -> Result<f64, Box<dyn std::error::Error>> {
+    let value = raw.parse::<f64>()?;
+    let multiplier = 10_u64.pow(u32::from(decimals)) as f64;
+    Ok(value / multiplier)
+}
+
+fn price_impact_bps(value: &str) -> Result<u16, Box<dyn std::error::Error>> {
+    let impact = value.parse::<f64>()?.abs();
+    Ok((impact * 10_000.0).round().clamp(0.0, u16::MAX as f64) as u16)
 }

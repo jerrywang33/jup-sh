@@ -122,6 +122,7 @@ V1 includes:
 - Deterministic local policy checks.
 - Structured policy output for agents and humans.
 - A `SettlementQuoter` boundary with a mock Jupiter-style quoter.
+- Optional quote-only Jupiter settlement estimates through `--quote-provider jupiter`.
 - Local intent persistence under `.jup-sh/intents`.
 - `intent list` and `intent show` for reading saved local intents.
 
@@ -189,7 +190,7 @@ V1 is an early product shell plus local CLI prototype. It does not yet include:
 - A real backend intent store.
 - A real SDK.
 - Real risk scoring.
-- Real Jupiter quote or swap integration.
+- Real Jupiter swap execution.
 - Real Solana Pay transaction request generation.
 - Real payment status verification.
 - Real wallet authorization.
