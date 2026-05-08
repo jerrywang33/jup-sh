@@ -170,23 +170,22 @@ function renderHome() {
     <section class="pay-sh-split">
       <div>
         <span class="section-kicker">Product Layer</span>
-        <h2>Jupiter-powered routing, policy-gated review.</h2>
+        <h2>Jupiter-powered settlement, policy-driven risk.</h2>
         <p>
-          jup.sh is a risk and settlement layer for Solana agent payments.
-          Agents pay with any verified token, recipients settle in USDC, and
-          Risk Review appears only when amount, token, recipient, route, or
-          behavior falls outside the user's policy.
+          jup.sh sits between agents and Solana payments. Jupiter routes any
+          verified token into USDC settlement, while the risk layer decides
+          whether a payment should auto-execute, require review, or be rejected.
         </p>
         <div class="hero-actions tight-actions">
           <a class="primary-btn" href="/pay/${state.invoice.id}" data-link>View Risk Review</a>
         </div>
       </div>
       <div class="mini-table">
-        <div><span>Layer</span><strong>Risk + settlement</strong></div>
-        <div><span>Powered by</span><strong>Jupiter API</strong></div>
+        <div><span>Settlement</span><strong>Jupiter API</strong></div>
+        <div><span>Risk</span><strong>Policy engine</strong></div>
         <div><span>Agents pay with</span><strong>Any verified token</strong></div>
-        <div><span>Recipients settle in</span><strong>USDC</strong></div>
-        <div><span>Policy decides</span><strong>When humans step in</strong></div>
+        <div><span>Recipients get</span><strong>USDC</strong></div>
+        <div><span>Decision</span><strong>Auto pay / review / reject</strong></div>
         <div><span>Flow</span><strong>Agent-native payments</strong></div>
       </div>
     </section>

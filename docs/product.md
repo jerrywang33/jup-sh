@@ -46,6 +46,16 @@ Agents pay with any verified token. Recipients settle in USDC. Policy decides
 when humans step in.
 ```
 
+The two product handles are:
+
+```txt
+Jupiter-powered settlement + policy-driven risk management.
+```
+
+Jupiter helps agents pay with any verified token and settle recipients in USDC.
+The risk layer decides whether a payment should auto-execute, require review,
+or be rejected.
+
 This makes the payment link a fallback review surface, not the main product.
 
 ## 3. Two-Layer Model
