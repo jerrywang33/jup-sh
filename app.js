@@ -85,8 +85,7 @@ function createHeader() {
         </span>
       </a>
       <nav class="nav">
-        <span aria-disabled="true">Docs</span>
-        <span aria-disabled="true">GitHub</span>
+        <a href="https://github.com/jerrywang33/jup-sh" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
   `;

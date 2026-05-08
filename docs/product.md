@@ -103,7 +103,8 @@ V1 includes:
 - A Risk Review prototype at `/pay/:id`.
 - A create-payment prototype at `/pay/new`.
 - A homepage CTA that points to Risk Review instead of manual payment creation.
-- Disabled `Docs` and `GitHub` nav items for later release.
+- A public GitHub nav link.
+- Docs route remains available but is not shown in the top navigation.
 - Product docs in this repository.
 - Cloudflare Pages deployment for `jup.sh`.
 
@@ -176,7 +177,6 @@ V1 is a static prototype and positioning release. It does not yet include:
 - Real Jupiter quote or swap integration.
 - Real Solana Pay transaction request generation.
 - Real payment status verification.
-- A public GitHub repository.
 - Public docs navigation.
 
 These are intentionally left for Phase 2.
