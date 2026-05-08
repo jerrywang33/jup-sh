@@ -90,6 +90,13 @@ infrastructure without sounding like legal advice.
 - Keep each post tied to one idea.
 - Prefer honest notes over polished announcements.
 
+## Running Notes Workflow
+
+Use `docs/x-running-notes.md` as the temporary pool for future post material.
+
+When a point from discussion may become a post, add it there. After the post is
+published, remove the used note or move it into this file as archived context.
+
 ## Suggested Near-Term Posts
 
 1. Launch note: personal background, why jup.sh exists, first version live.
