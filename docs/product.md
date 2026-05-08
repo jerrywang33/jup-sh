@@ -2,7 +2,7 @@
 
 ## 1. V1 Snapshot
 
-Date: 2026-05-07
+Date: 2026-05-08
 
 `jup.sh` V1 is live as a public product shell at:
 
@@ -117,6 +117,13 @@ V1 includes:
 - Docs route remains available but is not shown in the top navigation.
 - Product docs in this repository.
 - Cloudflare Pages deployment for `jup.sh`.
+- An early Rust CLI prototype.
+- Local payment intent creation.
+- Deterministic local policy checks.
+- Structured policy output for agents and humans.
+- A `SettlementQuoter` boundary with a mock Jupiter-style quoter.
+- Local intent persistence under `.jup-sh/intents`.
+- `intent show` for reading saved local intents.
 
 Current agent list shown on the homepage:
 
@@ -177,16 +184,16 @@ Policy decides whether a payment is automatic or requires Risk Review.
 
 ## 7. Current Limits
 
-V1 is a static prototype and positioning release. It does not yet include:
+V1 is an early product shell plus local CLI prototype. It does not yet include:
 
 - A real backend intent store.
-- A real CLI package.
 - A real SDK.
-- Real policy evaluation.
 - Real risk scoring.
 - Real Jupiter quote or swap integration.
 - Real Solana Pay transaction request generation.
 - Real payment status verification.
+- Real wallet authorization.
+- A published CLI package.
 - Public docs navigation.
 
 These are intentionally left for Phase 2.
@@ -207,12 +214,14 @@ Phase 2 should focus on one credible end-to-end path:
 
 1. `pay --agent claude --token SOL --settle 20 USDC`
 2. CLI creates a payment intent.
-3. Backend stores the intent.
-4. Policy engine evaluates amount, token, route, recipient, and frequency.
-5. If policy passes, payment proceeds through Auto Pay.
-6. If policy flags it, user opens Risk Review.
-7. Jupiter route settles USDC to recipient.
-8. API returns status and receipt.
+3. Local policy evaluates amount, token, recipient, and configured limits.
+4. CLI saves the intent locally.
+5. Backend stores the intent in later phases.
+6. Policy engine expands to route, recipient, agent, and frequency checks.
+7. If policy passes, payment proceeds to local wallet authorization.
+8. If policy flags it, user opens Risk Review.
+9. Jupiter route settles USDC to recipient.
+10. API returns status and receipt.
 
 ## 9. Target API Shape
 

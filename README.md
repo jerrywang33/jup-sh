@@ -84,6 +84,7 @@ npm run cli -- pay --agent claude --token SOL --settle 20 USDC --json
 
 The CLI returns a structured local payment intent with:
 
+- `status`: `ready_for_authorization`, `review_required`, or `rejected`.
 - `decision`: `auto_pay`, `review_required`, or `rejected`.
 - `nextAction`: `ready_for_authorization`, `open_review`, or `rejected`.
 - `riskLevel`: `low`, `medium`, or `high`.
@@ -138,12 +139,12 @@ npm run check
 Planned Phase 2 work:
 
 - Intent API.
-- CLI prototype.
-- Policy engine.
 - Risk Review fallback.
 - Solana Pay transaction request.
 - Jupiter API token-to-USDC settlement.
 - Payment status and receipt.
+- Published CLI package.
+- SDK.
 
 ## Disclaimer
 

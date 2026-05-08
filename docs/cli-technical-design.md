@@ -31,6 +31,7 @@ Expected result:
     "amount": 20,
     "token": "USDC"
   },
+  "status": "review_required",
   "decision": "review_required",
   "nextAction": "open_review",
   "riskLevel": "medium",
@@ -183,6 +184,7 @@ PaymentIntent {
     pay_token,
     settlement,
     quote,
+    status,
     decision,
     next_action,
     risk_level,
@@ -216,6 +218,14 @@ Decision values:
 | `auto_pay` | The intent is inside policy. Later phases may proceed to wallet authorization. |
 | `review_required` | The intent is valid, but requires human review before signing. |
 | `rejected` | The intent is outside allowed policy. |
+
+Intent status values:
+
+| Status | Meaning |
+| --- | --- |
+| `ready_for_authorization` | Policy passed. The next step is local authorization in a future phase. |
+| `review_required` | The intent is valid, but should be reviewed before signing. |
+| `rejected` | The intent should not continue. |
 
 Agent-facing action values:
 

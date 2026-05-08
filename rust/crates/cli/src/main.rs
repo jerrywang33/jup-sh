@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use jup_sh_core::{
-    CreatePaymentIntentInput, Decision, MockSettlementQuoter, NextAction, PaymentIntent, Policy,
-    PolicyCheckStatus, RiskLevel, create_payment_intent_with_quoter,
+    CreatePaymentIntentInput, Decision, IntentStatus, MockSettlementQuoter, NextAction,
+    PaymentIntent, Policy, PolicyCheckStatus, RiskLevel, create_payment_intent_with_quoter,
 };
 use std::{fs, path::PathBuf};
 
@@ -213,6 +213,7 @@ fn print_human(intent: &PaymentIntent) {
         trim_number(intent.settlement.amount),
         intent.settlement.token
     );
+    println!("Status: {}", intent_status_label(&intent.status));
     println!("Decision: {}", decision_label(&intent.decision));
     println!("Next action: {}", next_action_label(&intent.next_action));
     println!("Risk: {}", risk_level_label(&intent.risk_level));
@@ -246,6 +247,14 @@ fn decision_label(decision: &Decision) -> &'static str {
         Decision::AutoPay => "auto_pay",
         Decision::ReviewRequired => "review_required",
         Decision::Rejected => "rejected",
+    }
+}
+
+fn intent_status_label(status: &IntentStatus) -> &'static str {
+    match status {
+        IntentStatus::ReadyForAuthorization => "ready_for_authorization",
+        IntentStatus::ReviewRequired => "review_required",
+        IntentStatus::Rejected => "rejected",
     }
 }
 

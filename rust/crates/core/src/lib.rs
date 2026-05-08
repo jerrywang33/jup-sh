@@ -61,6 +61,14 @@ pub enum NextAction {
     Rejected,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum IntentStatus {
+    ReadyForAuthorization,
+    ReviewRequired,
+    Rejected,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RiskLevel {
@@ -153,6 +161,7 @@ pub struct PaymentIntent {
     pub reference: Option<String>,
     pub settlement: Settlement,
     pub quote: Option<SettlementQuote>,
+    pub status: IntentStatus,
     pub decision: Decision,
     pub next_action: NextAction,
     pub risk_level: RiskLevel,
@@ -191,7 +200,8 @@ pub fn create_payment_intent_with_quoter(
     };
 
     let policy_result = evaluate_policy(&normalized, policy)?;
-    let quote = match policy_result.decision {
+    let status = intent_status_for_decision(&policy_result.decision);
+    let quote = match &policy_result.decision {
         Decision::Rejected => None,
         _ => Some(quoter.quote_settlement(&normalized)?),
     };
@@ -209,6 +219,7 @@ pub fn create_payment_intent_with_quoter(
             token: normalized.settle_token,
         },
         quote,
+        status,
         decision: policy_result.decision,
         next_action: policy_result.next_action,
         risk_level: policy_result.risk_level,
@@ -447,6 +458,14 @@ fn next_action_for_decision(decision: &Decision) -> NextAction {
     }
 }
 
+fn intent_status_for_decision(decision: &Decision) -> IntentStatus {
+    match decision {
+        Decision::AutoPay => IntentStatus::ReadyForAuthorization,
+        Decision::ReviewRequired => IntentStatus::ReviewRequired,
+        Decision::Rejected => IntentStatus::Rejected,
+    }
+}
+
 fn risk_level_for_decision(decision: &Decision) -> RiskLevel {
     match decision {
         Decision::AutoPay => RiskLevel::Low,
@@ -562,5 +581,35 @@ mod tests {
         assert_eq!(quote.source, "fixed_test");
         assert_eq!(quote.input_amount, 1.23);
         assert_eq!(quote.price_impact_bps, 7);
+    }
+
+    #[test]
+    fn intent_status_tracks_policy_decision() {
+        let policy = Policy {
+            trusted_recipients: vec!["trusted-demo".to_string()],
+            ..Policy::default()
+        };
+
+        let ready =
+            create_payment_intent_with_quoter(input(2.0), &policy, "https://jup.sh", &FixedQuoter)
+                .unwrap();
+        assert_eq!(ready.status, IntentStatus::ReadyForAuthorization);
+
+        let review =
+            create_payment_intent_with_quoter(input(20.0), &policy, "https://jup.sh", &FixedQuoter)
+                .unwrap();
+        assert_eq!(review.status, IntentStatus::ReviewRequired);
+
+        let mut rejected_input = input(2.0);
+        rejected_input.pay_token = "FAKE".to_string();
+        let rejected = create_payment_intent_with_quoter(
+            rejected_input,
+            &policy,
+            "https://jup.sh",
+            &FixedQuoter,
+        )
+        .unwrap();
+        assert_eq!(rejected.status, IntentStatus::Rejected);
+        assert!(rejected.quote.is_none());
     }
 }
