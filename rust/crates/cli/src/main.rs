@@ -21,6 +21,8 @@ enum Command {
     Pay(PayCommand),
     /// Read local payment intents.
     Intent(IntentCommand),
+    /// Manage local payment policy.
+    Policy(PolicyCommand),
 }
 
 #[derive(Debug, Parser)]
@@ -127,6 +129,42 @@ struct IntentShowCommand {
     store: Option<PathBuf>,
 }
 
+#[derive(Debug, Parser)]
+struct PolicyCommand {
+    #[command(subcommand)]
+    command: PolicySubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+enum PolicySubcommand {
+    /// Write a default local policy file.
+    Init(PolicyInitCommand),
+    /// Show the effective local policy.
+    Show(PolicyShowCommand),
+}
+
+#[derive(Debug, Parser)]
+struct PolicyInitCommand {
+    /// Policy file path.
+    #[arg(long, default_value = "jup.policy.json")]
+    path: PathBuf,
+
+    /// Overwrite an existing policy file.
+    #[arg(long)]
+    force: bool,
+}
+
+#[derive(Debug, Parser)]
+struct PolicyShowCommand {
+    /// Optional policy file. Defaults to ./jup.policy.json when present.
+    #[arg(long)]
+    policy: Option<PathBuf>,
+
+    /// Print JSON only.
+    #[arg(long)]
+    json: bool,
+}
+
 fn main() {
     if let Err(error) = run() {
         eprintln!("error: {error}");
@@ -140,6 +178,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     match cli.command {
         Command::Pay(command) => run_pay(command)?,
         Command::Intent(command) => run_intent(command)?,
+        Command::Policy(command) => run_policy(command)?,
     }
 
     Ok(())
@@ -220,6 +259,44 @@ fn run_intent_show(command: IntentShowCommand) -> Result<(), Box<dyn std::error:
         println!("{}", serde_json::to_string_pretty(&intent)?);
     } else {
         print_human(&intent);
+    }
+
+    Ok(())
+}
+
+fn run_policy(command: PolicyCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command.command {
+        PolicySubcommand::Init(command) => run_policy_init(command),
+        PolicySubcommand::Show(command) => run_policy_show(command),
+    }
+}
+
+fn run_policy_init(command: PolicyInitCommand) -> Result<(), Box<dyn std::error::Error>> {
+    if command.path.exists() && !command.force {
+        return Err(format!(
+            "{} already exists; pass --force to overwrite it",
+            command.path.display()
+        )
+        .into());
+    }
+
+    let policy = Policy::default();
+    fs::write(
+        &command.path,
+        format!("{}\n", serde_json::to_string_pretty(&policy)?),
+    )?;
+    println!("Wrote {}", command.path.display());
+
+    Ok(())
+}
+
+fn run_policy_show(command: PolicyShowCommand) -> Result<(), Box<dyn std::error::Error>> {
+    let policy = load_policy(command.policy.as_ref())?;
+
+    if command.json {
+        println!("{}", serde_json::to_string_pretty(&policy)?);
+    } else {
+        print_policy(&policy);
     }
 
     Ok(())
@@ -353,6 +430,37 @@ fn print_intent_list(intents: &[PaymentIntent]) {
             intent.created_at.to_rfc3339()
         );
     }
+}
+
+fn print_policy(policy: &Policy) {
+    println!("jup.sh policy");
+    println!();
+    println!(
+        "Max auto settle: {} USDC",
+        trim_number(policy.max_auto_settle_usdc)
+    );
+    println!(
+        "Max allowed settle: {} USDC",
+        trim_number(policy.max_allowed_settle_usdc)
+    );
+    println!("Max price impact: {} bps", policy.max_price_impact_bps);
+    println!(
+        "Review high price impact: {}",
+        policy.review_high_price_impact
+    );
+    println!("Verified tokens: {}", policy.verified_tokens.join(", "));
+    println!(
+        "Trusted recipients: {}",
+        if policy.trusted_recipients.is_empty() {
+            "(none)".to_string()
+        } else {
+            policy.trusted_recipients.join(", ")
+        }
+    );
+    println!(
+        "Review unknown recipients: {}",
+        policy.review_unknown_recipients
+    );
 }
 
 fn decision_label(decision: &Decision) -> &'static str {

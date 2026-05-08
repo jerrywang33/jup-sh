@@ -124,6 +124,7 @@ V1 includes:
 - A `SettlementQuoter` boundary with a mock Jupiter-style quoter.
 - Optional quote-only Jupiter settlement estimates through `--quote-provider jupiter`.
 - Quote-aware risk checks for settlement token and price impact.
+- Local policy inspection and initialization through `policy show` and `policy init`.
 - Local intent persistence under `.jup-sh/intents`.
 - `intent list` and `intent show` for reading saved local intents.
 

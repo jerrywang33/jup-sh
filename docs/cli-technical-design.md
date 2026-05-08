@@ -138,6 +138,15 @@ jup-sh intent show intent_abc123
 jup-sh intent show intent_abc123 --json
 ```
 
+Manage local policy:
+
+```bash
+jup-sh policy show
+jup-sh policy show --json
+jup-sh policy init
+jup-sh policy init --path jup.policy.json --force
+```
+
 ## 5. Rust Workspace
 
 pay.sh is primarily implemented as a Rust workspace. jup.sh should follow the
@@ -354,6 +363,21 @@ Example:
 ```
 
 If no local file exists, the CLI uses the default policy.
+
+The CLI can show the effective policy:
+
+```bash
+jup-sh policy show
+jup-sh policy show --json
+```
+
+The CLI can write a default policy file:
+
+```bash
+jup-sh policy init
+```
+
+`policy init` does not overwrite an existing file unless `--force` is passed.
 
 ## 9. Output Rules
 

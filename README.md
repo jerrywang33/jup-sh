@@ -88,6 +88,13 @@ npm run cli -- intent show intent_xxx
 npm run cli -- intent show intent_xxx --json
 ```
 
+Manage local policy:
+
+```bash
+npm run cli -- policy show
+npm run cli -- policy init
+```
+
 JSON output for agents or scripts:
 
 ```bash
