@@ -162,7 +162,7 @@ npm run alpha:smoke
 JSON output for agents or scripts:
 
 ```bash
-npm run cli -- pay --agent claude --token SOL --settle 20 USDC --json
+npm run --silent cli:alpha -- pay --agent claude --token SOL --settle 20 USDC --json
 ```
 
 The CLI returns a structured local payment intent with:
@@ -172,6 +172,14 @@ The CLI returns a structured local payment intent with:
 - `nextAction`: `ready_for_authorization`, `open_review`, or `rejected`.
 - `riskLevel`: `low`, `medium`, or `high`.
 - `policyChecks`: deterministic local checks over intent fields and quote risk.
+
+For `pay`, exit codes are part of the agent contract:
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | The intent is inside policy and ready for local authorization. |
+| `2` | The intent is valid, but policy requires Risk Review. |
+| `1` | The intent is rejected or the command failed. |
 
 The default quote provider is `mock`. Use `jupiter` for quote-only real routing:
 

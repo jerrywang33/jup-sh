@@ -6,7 +6,7 @@ use jup_sh_core::{
     create_payment_intent_with_quoter,
 };
 use serde::Deserialize;
-use std::{fs, path::PathBuf, time::Duration};
+use std::{fs, path::PathBuf, process::ExitCode, time::Duration};
 
 #[derive(Debug, Parser)]
 #[command(name = "jup-sh")]
@@ -186,26 +186,27 @@ struct PolicyShowCommand {
     json: bool,
 }
 
-fn main() {
-    if let Err(error) = run() {
-        eprintln!("error: {error}");
-        std::process::exit(1);
+fn main() -> ExitCode {
+    match run() {
+        Ok(code) => code,
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::from(1)
+        }
     }
 }
 
-fn run() -> Result<(), Box<dyn std::error::Error>> {
+fn run() -> Result<ExitCode, Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::Pay(command) => run_pay(command)?,
-        Command::Intent(command) => run_intent(command)?,
-        Command::Policy(command) => run_policy(command)?,
+        Command::Pay(command) => run_pay(command),
+        Command::Intent(command) => run_intent(command),
+        Command::Policy(command) => run_policy(command),
     }
-
-    Ok(())
 }
 
-fn run_pay(command: PayCommand) -> Result<(), Box<dyn std::error::Error>> {
+fn run_pay(command: PayCommand) -> Result<ExitCode, Box<dyn std::error::Error>> {
     let policy = load_policy(command.policy.as_ref())?;
     let settle_amount = command
         .settle
@@ -251,15 +252,17 @@ fn run_pay(command: PayCommand) -> Result<(), Box<dyn std::error::Error>> {
         println!("Saved: {}", path.display());
     }
 
-    Ok(())
+    Ok(exit_code_for_decision(&intent.decision))
 }
 
-fn run_intent(command: IntentCommand) -> Result<(), Box<dyn std::error::Error>> {
+fn run_intent(command: IntentCommand) -> Result<ExitCode, Box<dyn std::error::Error>> {
     match command.command {
-        IntentSubcommand::Export(command) => run_intent_export(command),
-        IntentSubcommand::List(command) => run_intent_list(command),
-        IntentSubcommand::Show(command) => run_intent_show(command),
-    }
+        IntentSubcommand::Export(command) => run_intent_export(command)?,
+        IntentSubcommand::List(command) => run_intent_list(command)?,
+        IntentSubcommand::Show(command) => run_intent_show(command)?,
+    };
+
+    Ok(ExitCode::SUCCESS)
 }
 
 fn run_intent_list(command: IntentListCommand) -> Result<(), Box<dyn std::error::Error>> {
@@ -303,11 +306,13 @@ fn run_intent_export(command: IntentExportCommand) -> Result<(), Box<dyn std::er
     Ok(())
 }
 
-fn run_policy(command: PolicyCommand) -> Result<(), Box<dyn std::error::Error>> {
+fn run_policy(command: PolicyCommand) -> Result<ExitCode, Box<dyn std::error::Error>> {
     match command.command {
-        PolicySubcommand::Init(command) => run_policy_init(command),
-        PolicySubcommand::Show(command) => run_policy_show(command),
-    }
+        PolicySubcommand::Init(command) => run_policy_init(command)?,
+        PolicySubcommand::Show(command) => run_policy_show(command)?,
+    };
+
+    Ok(ExitCode::SUCCESS)
 }
 
 fn run_policy_init(command: PolicyInitCommand) -> Result<(), Box<dyn std::error::Error>> {
@@ -539,6 +544,14 @@ fn policy_check_status_label(status: &PolicyCheckStatus) -> &'static str {
         PolicyCheckStatus::Pass => "pass",
         PolicyCheckStatus::Review => "review",
         PolicyCheckStatus::Reject => "reject",
+    }
+}
+
+fn exit_code_for_decision(decision: &Decision) -> ExitCode {
+    match decision {
+        Decision::AutoPay => ExitCode::SUCCESS,
+        Decision::ReviewRequired => ExitCode::from(2),
+        Decision::Rejected => ExitCode::from(1),
     }
 }
 

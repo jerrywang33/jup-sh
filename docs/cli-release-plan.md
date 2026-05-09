@@ -38,6 +38,14 @@ npm run alpha:smoke
 It verifies `policy show`, `pay`, `intent list`, and `intent export` through
 the npm wrapper.
 
+The smoke test now covers the alpha CLI contract for agents:
+
+- `pay --json` emits parseable JSON only
+- `auto_pay` exits with code `0`
+- `review_required` exits with code `2`
+- `rejected` exits with code `1`
+- intent list/export still work after those outcomes
+
 ## Target Developer Experience
 
 Primary target:
@@ -121,6 +129,7 @@ Before publishing to npm, the CLI should have:
 
 - stable command names for `pay`, `policy`, and `intent`
 - clear JSON output for agents
+- documented exit codes for `pay`
 - no private keys, signatures, or transactions in exported review payloads
 - `README.md` Quickstart that matches the published install path
 - GitHub release notes based on `CHANGELOG.md`

@@ -141,6 +141,17 @@ Options:
 | `--review-base-url` | no | Defaults to `https://jup.sh`. |
 | `--store` | no | Intent storage directory. Defaults to `.jup-sh/intents`. |
 
+`pay --json` is the stable agent-facing output mode. It prints only the
+serialized payment intent to stdout.
+
+`pay` exit codes:
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | The intent is inside policy and ready for local authorization. |
+| `2` | The intent is valid, but policy requires Risk Review. |
+| `1` | The intent is rejected or the command failed. |
+
 Show a saved intent:
 
 ```bash

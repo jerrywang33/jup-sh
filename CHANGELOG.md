@@ -41,6 +41,11 @@ All notable changes to jup.sh will be documented in this file.
   - `npm run cli:alpha`
 - Added alpha wrapper smoke test:
   - `npm run alpha:smoke`
+- Added agent-facing CLI contract coverage for:
+  - `pay --json`
+  - `auto_pay` exit code `0`
+  - `review_required` exit code `2`
+  - `rejected` exit code `1`
 - Added release-readiness documentation:
   - `docs/cli-release-plan.md`
   - `docs/jupiter-quote-design.md`
