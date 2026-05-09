@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 
 const steps = [
   ["npm", ["run", "check"]],
+  ["npm", ["run", "sdk:smoke"]],
   ["npm", ["run", "alpha:smoke"]],
   ["npm", ["run", "alpha:pack"]],
   ["cargo", ["test", "--workspace"], { cwd: "rust" }],

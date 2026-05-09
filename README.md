@@ -127,11 +127,13 @@ V1 includes:
 - A pay.sh-inspired landing page.
 - A command-first agent payment concept.
 - A Risk Review prototype.
+- A minimal TypeScript SDK prototype in `sdk/`.
 - A static product shell for the current positioning.
 - Changelog in `CHANGELOG.md`.
 - Product notes in `docs/product.md`.
 - Technical architecture and design diagrams in `docs/architecture.md`.
 - CLI release plan in `docs/cli-release-plan.md`.
+- SDK technical design in `docs/sdk-technical-design.md`.
 - CLI JSON contract in `docs/cli-json-contract.md`.
 - npm alpha release checklist in `docs/npm-alpha-release-checklist.md`.
 - Draft alpha release notes in `docs/releases/0.1.0-alpha.0.md`.
@@ -162,6 +164,24 @@ Local npm wrapper prototype:
 
 ```bash
 npm run cli:alpha -- pay --agent deepseek --token SOL --amount 20 --settle USDC
+```
+
+Local TypeScript SDK example:
+
+```bash
+npm run sdk:check
+npm run sdk:smoke
+```
+
+```ts
+import { createPaymentIntent } from "./sdk/index.js";
+
+const intent = await createPaymentIntent({
+  agent: "deepseek",
+  token: "SOL",
+  amount: 20,
+  settle: "USDC",
+});
 ```
 
 Alpha wrapper smoke test:

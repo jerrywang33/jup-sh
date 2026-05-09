@@ -224,7 +224,32 @@ https://jup.sh/pay/intent_xxx#intent=<base64url-json-payload>
 See [Risk Review Export Design](risk-review-export-design.md) for the static
 review model.
 
-## 7. Run The Release Gate
+## 7. Try The SDK Surface
+
+The first TypeScript SDK surface is local and source-only:
+
+```ts
+import { createPaymentIntent } from "../sdk/index.js";
+
+const intent = await createPaymentIntent({
+  agent: "deepseek",
+  token: "SOL",
+  amount: 20,
+  settle: "USDC",
+});
+```
+
+Typecheck the SDK and example:
+
+```bash
+npm run sdk:check
+npm run sdk:smoke
+```
+
+The SDK returns the same `PaymentIntent` contract as the CLI JSON mode. It does
+not publish an npm package or call a hosted backend yet.
+
+## 8. Run The Release Gate
 
 Before a release checkpoint:
 

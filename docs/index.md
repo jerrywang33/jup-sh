@@ -40,6 +40,7 @@ Recommended order:
 3. [CLI JSON Contract](cli-json-contract.md) - agent-facing output and exit codes.
 4. [Jupiter Quote-Only Design](jupiter-quote-design.md) - token-to-USDC quote boundary.
 5. [Risk Review Export Design](risk-review-export-design.md) - static review URL model.
+6. [SDK Technical Design](sdk-technical-design.md) - first TypeScript SDK surface.
 
 ## Current Alpha
 

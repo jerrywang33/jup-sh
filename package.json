@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "check": "node --check app.js && node --check server.js && cd rust && cargo check",
+    "check": "node --check app.js && node --check server.js && npm run sdk:check && cd rust && cargo check",
+    "sdk:check": "tsc --noEmit",
+    "sdk:smoke": "node scripts/sdk-smoke.mjs",
     "cli": "cd rust && cargo run --",
     "cli:alpha": "node npm/bin/jup-sh",
     "alpha:smoke": "node scripts/alpha-smoke.mjs",
@@ -13,6 +15,7 @@
     "deploy": "rm -rf /tmp/jup-sh-pages && mkdir -p /tmp/jup-sh-pages && cp index.html app.js styles.css favicon.svg _redirects /tmp/jup-sh-pages/ && cp -R assets /tmp/jup-sh-pages/ && wrangler pages deploy /tmp/jup-sh-pages --project-name=jup-sh"
   },
   "devDependencies": {
+    "typescript": "^6.0.3",
     "wrangler": "^4.0.0"
   }
 }
