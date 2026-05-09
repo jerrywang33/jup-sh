@@ -122,6 +122,7 @@ V1 includes:
 - A command-first agent payment concept.
 - A Risk Review prototype.
 - A static product shell for the current positioning.
+- Changelog in `CHANGELOG.md`.
 - Product notes in `docs/product.md`.
 - CLI release plan in `docs/cli-release-plan.md`.
 - Jupiter quote-only design in `docs/jupiter-quote-design.md`.

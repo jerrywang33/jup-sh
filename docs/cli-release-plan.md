@@ -123,7 +123,7 @@ Before publishing to npm, the CLI should have:
 - clear JSON output for agents
 - no private keys, signatures, or transactions in exported review payloads
 - `README.md` Quickstart that matches the published install path
-- GitHub release notes
+- GitHub release notes based on `CHANGELOG.md`
 - basic smoke tests for:
   - `jup-sh policy show`
   - `jup-sh pay ...`
