@@ -126,6 +126,7 @@ V1 includes:
 - Product notes in `docs/product.md`.
 - CLI release plan in `docs/cli-release-plan.md`.
 - CLI JSON contract in `docs/cli-json-contract.md`.
+- npm alpha release checklist in `docs/npm-alpha-release-checklist.md`.
 - Jupiter quote-only design in `docs/jupiter-quote-design.md`.
 - Risk Review export design in `docs/risk-review-export-design.md`.
 - X / Twitter content notes in `docs/x-content.md`.
@@ -158,6 +159,12 @@ Alpha wrapper smoke test:
 
 ```bash
 npm run alpha:smoke
+```
+
+Alpha npm package dry run:
+
+```bash
+npm run alpha:pack
 ```
 
 JSON output for agents or scripts:

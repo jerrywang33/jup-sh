@@ -8,6 +8,7 @@
     "cli": "cd rust && cargo run --",
     "cli:alpha": "node npm/bin/jup-sh",
     "alpha:smoke": "node scripts/alpha-smoke.mjs",
+    "alpha:pack": "node scripts/npm-pack-dry-run.mjs",
     "deploy": "rm -rf /tmp/jup-sh-pages && mkdir -p /tmp/jup-sh-pages && cp index.html app.js styles.css favicon.svg _redirects /tmp/jup-sh-pages/ && wrangler pages deploy /tmp/jup-sh-pages --project-name=jup-sh"
   },
   "devDependencies": {

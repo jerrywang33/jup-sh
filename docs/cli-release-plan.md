@@ -47,6 +47,18 @@ The smoke test now covers the alpha CLI contract for agents:
 - key payment intent fields match `docs/cli-json-contract.md`
 - intent list/export still work after those outcomes
 
+The package dry run is available as:
+
+```bash
+npm run alpha:pack
+```
+
+The detailed release checklist is in:
+
+```txt
+docs/npm-alpha-release-checklist.md
+```
+
 ## Target Developer Experience
 
 Primary target:
@@ -135,6 +147,7 @@ Before publishing to npm, the CLI should have:
 - no private keys, signatures, or transactions in exported review payloads
 - `README.md` Quickstart that matches the published install path
 - GitHub release notes based on `CHANGELOG.md`
+- npm package dry-run checklist
 - basic smoke tests for:
   - `jup-sh policy show`
   - `jup-sh pay ...`

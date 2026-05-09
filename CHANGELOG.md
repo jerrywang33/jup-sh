@@ -47,6 +47,7 @@ All notable changes to jup.sh will be documented in this file.
   - `review_required` exit code `2`
   - `rejected` exit code `1`
 - Added CLI JSON contract documentation and a review-required fixture.
+- Added npm alpha package dry-run tooling and release checklist.
 - Added release-readiness documentation:
   - `docs/cli-release-plan.md`
   - `docs/jupiter-quote-design.md`
