@@ -82,7 +82,8 @@ Confirm:
 
 ## GitHub Release Draft
 
-Do not create a tag until the release commit is final.
+Do not create a tag until the release commit is final and `npm run
+release:check` has passed.
 
 Recommended tag:
 

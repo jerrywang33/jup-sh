@@ -2,7 +2,7 @@
 
 All notable changes to jup.sh will be documented in this file.
 
-## 0.1.0-alpha.0 - Unreleased
+## 0.1.0-alpha.0 - 2026-05-09
 
 ### Added
 
