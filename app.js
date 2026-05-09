@@ -188,21 +188,16 @@ function fakeQR(seed) {
 
 function renderEcosystemWall() {
   const items = [
-    { label: "x402", logo: "/assets/logos/x402.png", mark: "402", tone: "x402" },
-    { label: "Privy", logo: "/assets/logos/privy.png", mark: "P", tone: "privy" },
     { label: "Qwen", logo: "/assets/logos/qwen.png", mark: "Q", tone: "qwen" },
     { label: "Claude", logo: "/assets/logos/claude.svg", mark: "C", tone: "claude" },
     { label: "Codex", logo: "/assets/logos/openai.svg", mark: "AI", tone: "codex" },
     { label: "Jupiter", logo: "/assets/logos/jupiter.png", mark: "JUP", tone: "jupiter" },
     { label: "Solana", logo: "/assets/logos/solana.svg", mark: "SOL", tone: "solana" },
     { label: "DeepSeek", logo: "/assets/logos/deepseek.svg", mark: "D", tone: "deepseek" },
-    { label: "Kimi", mark: "K", tone: "kimi" },
-    { label: "MiniMax", mark: "M", tone: "minimax" },
     { label: "AWS", logo: "/assets/logos/aws.svg", mark: "aws", tone: "aws" },
     { label: "Google Cloud", logo: "/assets/logos/googlecloud.svg", mark: "G", tone: "google" },
     { label: "Cloudflare", logo: "/assets/logos/cloudflare.svg", mark: "CF", tone: "cloudflare" },
     { label: "GitHub", logo: "/assets/logos/github.svg", mark: "GH", tone: "github" },
-    { label: "Risk Policy", mark: "RP", tone: "risk" },
   ];
   const row = items
     .map(
@@ -259,7 +254,7 @@ function renderHome() {
                 <code>--token SOL</code>
                 <code>--settle 20 USDC</code>
               </span>
-              <small>Copy CLI</small>
+              <small>Copy</small>
             </button>
           </div>
           <div class="agent-row">

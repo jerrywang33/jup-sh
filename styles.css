@@ -1604,7 +1604,15 @@ body.light-route {
   margin: 18px auto 0;
   position: relative;
   color: transparent;
-  background: linear-gradient(180deg, #b8b8b8 0%, #b8b8b8 100%);
+  background: linear-gradient(
+    115deg,
+    #fb7185 0%,
+    #ffd166 19%,
+    #22e29b 39%,
+    #28d7ff 58%,
+    #6a8cff 76%,
+    #a78bfa 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1614,24 +1622,19 @@ body.light-route {
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
-  -webkit-text-stroke: 1px rgba(184, 184, 184, 0.72);
+  -webkit-text-stroke: 1px rgba(244, 244, 245, 0.55);
   text-shadow:
-    1px 1px 0 #d0d0d0,
-    2px 2px 0 #c4c4c4,
-    4px 4px 0 #a8a8a8,
-    6px 6px 0 #7fb7ba,
-    8px 8px 0 #8079b6,
-    10px 10px 0 #6f7f84,
-    12px 12px 0 #4c5b5f,
-    13px 13px 0 rgba(237, 137, 91, 0.68);
-  animation: wordmark-wave 5.4s ease-in-out infinite;
+    1px 1px 0 rgba(255, 255, 255, 0.82),
+    3px 3px 0 rgba(40, 215, 255, 0.82),
+    5px 5px 0 rgba(34, 226, 155, 0.78),
+    7px 7px 0 rgba(255, 209, 102, 0.58),
+    9px 9px 0 rgba(251, 113, 133, 0.68),
+    12px 12px 0 rgba(39, 39, 42, 0.85);
 }
 
 .hero-wordmark span {
   display: inline-block;
   transform: translateY(0);
-  animation: wordmark-letter-wave 2.8s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.08s);
 }
 
 .hero-wordmark::before,
@@ -1644,23 +1647,20 @@ body.light-route {
 }
 
 .hero-wordmark::before {
-  color: #dfe7e9;
-  transform: translate(3px, 6px);
-  animation: wordmark-wave-shadow 5.4s ease-in-out infinite;
+  color: rgba(103, 232, 249, 0.48);
+  transform: translate(4px, 7px);
   text-shadow:
-    2px 2px 0 rgba(255, 255, 255, 0.86),
-    4px 4px 0 #aeb7ba,
-    7px 7px 0 #6f7f84,
-    10px 10px 0 #46555a;
+    3px 3px 0 rgba(34, 226, 155, 0.42),
+    7px 7px 0 rgba(167, 139, 250, 0.4),
+    11px 11px 0 rgba(24, 24, 27, 0.86);
 }
 
 .hero-wordmark::after {
-  color: rgba(255, 177, 97, 0.54);
-  transform: translate(12px, 15px);
-  animation: wordmark-wave-deep 5.4s ease-in-out infinite;
+  color: rgba(251, 113, 133, 0.3);
+  transform: translate(13px, 15px);
   text-shadow:
-    -2px -1px 0 rgba(167, 139, 250, 0.44),
-    2px 2px 0 rgba(88, 111, 116, 0.9);
+    -3px -2px 0 rgba(167, 139, 250, 0.28),
+    2px 2px 0 rgba(39, 39, 42, 0.82);
 }
 
 .pay-home-grid {
@@ -1799,18 +1799,8 @@ body.light-route {
 
 .terminal-line small {
   flex: 0 0 auto;
-  min-height: 30px;
-  border-radius: 999px;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #03100b;
-  background: #22e29b;
-  box-shadow: 0 0 20px rgba(34, 226, 155, 0.16);
+  color: #a1a1aa;
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
 }
 
 .agent-row {
@@ -1893,27 +1883,29 @@ body.light-route {
 
 .ecosystem-chip {
   flex: 0 0 auto;
-  min-width: 156px;
+  min-width: 168px;
   min-height: 54px;
-  border: 1px solid #2b2b31;
-  border-radius: 10px;
-  padding: 8px 16px 8px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 18px;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
   color: #f4f4f5;
-  background: rgba(17, 17, 20, 0.92);
+  background: rgba(255, 255, 255, 0.025);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .ecosystem-chip i {
-  width: 42px;
-  height: 38px;
-  border-radius: 9px;
+  width: auto;
+  min-width: 28px;
+  height: 30px;
+  border-radius: 0;
   display: grid;
   place-items: center;
-  color: #09090b;
-  background: #fafafa;
+  color: #f4f4f5;
+  background: transparent;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 10px;
   font-style: normal;
@@ -1924,28 +1916,22 @@ body.light-route {
 }
 
 .ecosystem-chip i img {
-  width: 28px;
-  max-width: 34px;
-  height: 28px;
+  width: auto;
+  max-width: 102px;
+  height: 24px;
   display: block;
   object-fit: contain;
 }
 
-.ecosystem-x402 i,
-.ecosystem-privy i,
 .ecosystem-qwen i,
 .ecosystem-cloudflare i {
-  width: 72px;
-  background: #fafafa;
+  min-width: 74px;
 }
 
-.ecosystem-x402 i img,
-.ecosystem-privy i img,
 .ecosystem-qwen i img,
 .ecosystem-cloudflare i img {
-  width: 58px;
-  max-width: 58px;
-  height: 26px;
+  max-width: 88px;
+  height: 24px;
 }
 
 .ecosystem-chip i img + span {
@@ -1963,62 +1949,51 @@ body.light-route {
 }
 
 .ecosystem-x402 i {
-  background: #f8fafc;
 }
 
 .ecosystem-privy i {
-  background: #c4b5fd;
 }
 
 .ecosystem-qwen i,
 .ecosystem-codex i {
-  background: #93c5fd;
 }
 
 .ecosystem-claude i {
-  background: #f0abfc;
 }
 
 .ecosystem-jupiter i {
-  background: #111114;
 }
 
 .ecosystem-jupiter i img {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
 }
 
 .ecosystem-solana i {
-  background: linear-gradient(135deg, #9945ff, #14f195);
 }
 
 .ecosystem-risk i {
-  background: #a7f3d0;
 }
 
 .ecosystem-deepseek i,
 .ecosystem-kimi i,
 .ecosystem-minimax i {
-  background: #fef3c7;
 }
 
 .ecosystem-aws i {
-  background: #ffb84d;
 }
 
 .ecosystem-google i {
-  background: conic-gradient(from 45deg, #4285f4, #34a853, #fbbc05, #ea4335, #4285f4);
 }
 
 .ecosystem-cloudflare i {
-  background: #f97316;
 }
 
 .ecosystem-github i {
   color: #f4f4f5;
-  background: #18181b;
-  border: 1px solid #3f3f46;
+  background: transparent;
+  border: 0;
 }
 
 .ecosystem-claude i,
@@ -2052,72 +2027,8 @@ body.light-route {
   }
 }
 
-@keyframes wordmark-wave {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  42% {
-    transform: translateY(-4px);
-  }
-
-  72% {
-    transform: translateY(2px);
-  }
-}
-
-@keyframes wordmark-wave-shadow {
-  0%,
-  100% {
-    transform: translate(3px, 6px);
-  }
-
-  42% {
-    transform: translate(3px, 10px);
-  }
-
-  72% {
-    transform: translate(3px, 4px);
-  }
-}
-
-@keyframes wordmark-wave-deep {
-  0%,
-  100% {
-    transform: translate(12px, 15px);
-  }
-
-  42% {
-    transform: translate(12px, 19px);
-  }
-
-  72% {
-    transform: translate(12px, 12px);
-  }
-}
-
-@keyframes wordmark-letter-wave {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  45% {
-    transform: translateY(-7px);
-  }
-
-  70% {
-    transform: translateY(2px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .ecosystem-track,
-  .hero-wordmark,
-  .hero-wordmark span,
-  .hero-wordmark::before,
-  .hero-wordmark::after {
+  .ecosystem-track {
     animation: none;
   }
 }
