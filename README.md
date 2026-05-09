@@ -130,6 +130,7 @@ V1 includes:
 - A static product shell for the current positioning.
 - Changelog in `CHANGELOG.md`.
 - Product notes in `docs/product.md`.
+- Technical architecture and design diagrams in `docs/architecture.md`.
 - CLI release plan in `docs/cli-release-plan.md`.
 - CLI JSON contract in `docs/cli-json-contract.md`.
 - npm alpha release checklist in `docs/npm-alpha-release-checklist.md`.

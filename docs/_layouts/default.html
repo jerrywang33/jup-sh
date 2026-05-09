@@ -25,6 +25,7 @@
         <div class="nav-section">
           <p>Start</p>
           <a href="{{ '/' | relative_url }}">Overview</a>
+          <a href="{{ '/architecture/' | relative_url }}">Architecture</a>
           <a href="{{ '/quickstart/' | relative_url }}">Quickstart</a>
         </div>
         <div class="nav-section">
@@ -49,5 +50,32 @@
         {{ content }}
       </main>
     </div>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+      document.querySelectorAll("pre > code.language-mermaid").forEach((block) => {
+        const container = document.createElement("div");
+        container.className = "mermaid";
+        container.textContent = block.textContent;
+        block.parentElement.replaceWith(container);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "dark",
+        securityLevel: "strict",
+        themeVariables: {
+          background: "#08090b",
+          primaryColor: "#101216",
+          primaryTextColor: "#f4f4f5",
+          primaryBorderColor: "#2f3440",
+          lineColor: "#7dd3fc",
+          secondaryColor: "#151820",
+          tertiaryColor: "#0d1016",
+          noteBkgColor: "#151820",
+          noteTextColor: "#f4f4f5"
+        }
+      });
+    </script>
   </body>
 </html>

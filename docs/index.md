@@ -43,9 +43,14 @@ It does not include:
 
 ## Start Here
 
+- [Architecture](architecture.md)
 - [Quickstart](quickstart.md)
 - [CLI JSON Contract](cli-json-contract.md)
 - [0.1.0-alpha.0 Release Notes](releases/0.1.0-alpha.0.md)
+
+Read [Architecture](architecture.md) first if you want the system model:
+intent creation, policy decisions, Jupiter quote-only settlement, Risk Review,
+and the current alpha boundary.
 
 ## Product Boundary
 
