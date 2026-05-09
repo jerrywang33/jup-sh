@@ -144,6 +144,12 @@ Options:
 `pay --json` is the stable agent-facing output mode. It prints only the
 serialized payment intent to stdout.
 
+The field-level contract is defined in:
+
+```txt
+docs/cli-json-contract.md
+```
+
 `pay` exit codes:
 
 | Exit code | Meaning |

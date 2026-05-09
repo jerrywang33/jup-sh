@@ -46,6 +46,7 @@ All notable changes to jup.sh will be documented in this file.
   - `auto_pay` exit code `0`
   - `review_required` exit code `2`
   - `rejected` exit code `1`
+- Added CLI JSON contract documentation and a review-required fixture.
 - Added release-readiness documentation:
   - `docs/cli-release-plan.md`
   - `docs/jupiter-quote-design.md`

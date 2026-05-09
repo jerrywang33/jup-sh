@@ -125,6 +125,7 @@ V1 includes:
 - Changelog in `CHANGELOG.md`.
 - Product notes in `docs/product.md`.
 - CLI release plan in `docs/cli-release-plan.md`.
+- CLI JSON contract in `docs/cli-json-contract.md`.
 - Jupiter quote-only design in `docs/jupiter-quote-design.md`.
 - Risk Review export design in `docs/risk-review-export-design.md`.
 - X / Twitter content notes in `docs/x-content.md`.

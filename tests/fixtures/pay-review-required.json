@@ -1,0 +1,71 @@
+{
+  "intentId": "intent_example_review_required",
+  "agent": "claude",
+  "payToken": "SOL",
+  "recipient": null,
+  "reference": null,
+  "settlement": {
+    "amount": 20,
+    "token": "USDC"
+  },
+  "quote": {
+    "source": "mock_jupiter",
+    "inputToken": "SOL",
+    "inputAmount": 0.13333333,
+    "settleAmount": 20,
+    "settleToken": "USDC",
+    "priceImpactBps": 12
+  },
+  "status": "review_required",
+  "decision": "review_required",
+  "nextAction": "open_review",
+  "riskLevel": "medium",
+  "reasons": [
+    "recipient is not trusted",
+    "settlement amount exceeds auto-pay limit of 5 USDC"
+  ],
+  "policyChecks": [
+    {
+      "name": "verified_token",
+      "status": "pass",
+      "message": "SOL is verified"
+    },
+    {
+      "name": "settlement_token",
+      "status": "pass",
+      "message": "USDC settlement is supported"
+    },
+    {
+      "name": "max_allowed_amount",
+      "status": "pass",
+      "message": "20 USDC is within the max allowed limit"
+    },
+    {
+      "name": "recipient_trust",
+      "status": "review",
+      "message": "recipient is not trusted"
+    },
+    {
+      "name": "auto_pay_limit",
+      "status": "review",
+      "message": "settlement amount exceeds auto-pay limit of 5 USDC"
+    },
+    {
+      "name": "quote_available",
+      "status": "pass",
+      "message": "mock_jupiter quote is available"
+    },
+    {
+      "name": "quote_settlement_token",
+      "status": "pass",
+      "message": "quote settles to USDC"
+    },
+    {
+      "name": "quote_price_impact",
+      "status": "pass",
+      "message": "quote price impact is 12 bps, within the 100 bps policy limit"
+    }
+  ],
+  "reviewUrl": "https://jup.sh/pay/intent_example_review_required",
+  "createdAt": "2026-05-09T00:00:00Z"
+}
