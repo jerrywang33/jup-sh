@@ -59,6 +59,12 @@ The detailed release checklist is in:
 docs/npm-alpha-release-checklist.md
 ```
 
+Draft release notes for the first alpha checkpoint are in:
+
+```txt
+docs/releases/0.1.0-alpha.0.md
+```
+
 ## Target Developer Experience
 
 Primary target:
@@ -148,6 +154,7 @@ Before publishing to npm, the CLI should have:
 - `README.md` Quickstart that matches the published install path
 - GitHub release notes based on `CHANGELOG.md`
 - npm package dry-run checklist
+- GitHub pre-release draft for `v0.1.0-alpha.0`
 - basic smoke tests for:
   - `jup-sh policy show`
   - `jup-sh pay ...`

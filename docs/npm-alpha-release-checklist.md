@@ -71,6 +71,39 @@ Confirm:
 - Risk Review export does not include private keys, signatures, swap
   transactions, or wallet secrets.
 - `CHANGELOG.md` has the release notes.
+- `docs/releases/0.1.0-alpha.0.md` matches the release scope.
+- The GitHub release is marked as a pre-release.
+
+## GitHub Release Draft
+
+Do not create a tag until the release commit is final.
+
+Recommended tag:
+
+```txt
+v0.1.0-alpha.0
+```
+
+Recommended title:
+
+```txt
+jup.sh 0.1.0-alpha.0
+```
+
+Release notes source:
+
+```txt
+docs/releases/0.1.0-alpha.0.md
+```
+
+Before creating the tag:
+
+- run the required checks above;
+- confirm the working tree is clean;
+- confirm `npm/package.json` still has `"private": true`;
+- confirm no npm package has been published;
+- confirm the release is described as source-run / developer alpha;
+- mark the GitHub release as pre-release.
 
 ## Before Publishing to npm
 
