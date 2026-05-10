@@ -16,14 +16,17 @@ without adding accounts, auth, storage, or server deployment.
 ```mermaid
 flowchart LR
   CLI["jup.sh CLI"]
+  SDK["TypeScript SDK"]
   Store["local intent store<br/>.jup-sh/intents"]
   Export["intent export"]
+  Helper["createRiskReviewUrl"]
   URL["/pay/:id#intent=..."]
   Browser["static Risk Review page"]
   User["human reviewer"]
 
   CLI --> Store
   Store --> Export --> URL --> Browser --> User
+  SDK --> Helper --> URL
 ```
 
 The review page is not the primary payment flow. It appears only when policy
@@ -50,6 +53,32 @@ https://jup.sh/pay/intent_abc123#intent=<base64url-json-payload>
 ```
 
 The website reads the `#intent=` fragment and renders the real intent data.
+
+## SDK Helper
+
+The SDK can generate the same URL format without a subprocess:
+
+```ts
+import {
+  createPaymentIntent,
+  createRiskReviewUrl,
+} from "../sdk/index.js";
+
+const intent = await createPaymentIntent({
+  agent: "deepseek",
+  token: "SOL",
+  amount: 20,
+  settle: "USDC",
+});
+
+const reviewUrl = createRiskReviewUrl(intent, {
+  reviewBaseUrl: "https://www.jup.sh",
+});
+```
+
+`createRiskReviewUrl` uses the same payload contract as `jup-sh intent export`.
+`parseRiskReviewPayload` can decode the fragment back into a `PaymentIntent`
+for tests and local tooling.
 
 ## Why URL Fragment
 

@@ -56,6 +56,12 @@ All notable changes to jup.sh will be documented in this file.
   - `docs/jupiter-quote-design.md`
   - `docs/risk-review-export-design.md`
   - `docs/cli-technical-design.md`
+- Added a source-only TypeScript SDK prototype with:
+  - `createPaymentIntent`
+  - `createJupiterQuoteProvider`
+  - `createRiskReviewUrl`
+  - `encodeRiskReviewPayload`
+  - `parseRiskReviewPayload`
 
 ### Not Included
 

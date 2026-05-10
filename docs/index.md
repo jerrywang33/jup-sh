@@ -55,6 +55,8 @@ It includes:
 - local intent storage;
 - Risk Review URL export;
 - hosted static Risk Review rendering;
+- source-only TypeScript SDK helpers for payment intents, Jupiter quote-only
+  estimates, and Risk Review URL export;
 - an agent-facing JSON contract;
 - release checks for the alpha package shape.
 

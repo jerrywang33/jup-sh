@@ -109,6 +109,10 @@ export type CreatePaymentIntentOptions = {
   idFactory?: () => string;
 };
 
+export type RiskReviewUrlOptions = {
+  reviewBaseUrl?: string;
+};
+
 export const DEFAULT_POLICY: Policy = {
   maxAutoSettleUSDC: 5,
   maxAllowedSettleUSDC: 100,
@@ -189,6 +193,26 @@ export async function createPaymentIntent(
     reviewUrl: `${reviewBaseUrl}/pay/${intentId}`,
     createdAt,
   };
+}
+
+export function createRiskReviewUrl(
+  intent: PaymentIntent,
+  options: RiskReviewUrlOptions = {}
+): string {
+  const reviewBaseUrl = (options.reviewBaseUrl ?? "https://jup.sh").replace(/\/+$/, "");
+  const intentId = encodeURIComponent(intent.intentId);
+  return `${reviewBaseUrl}/pay/${intentId}#intent=${encodeRiskReviewPayload(intent)}`;
+}
+
+export function encodeRiskReviewPayload(intent: PaymentIntent): string {
+  assertPaymentIntent(intent);
+  return Buffer.from(JSON.stringify(intent), "utf8").toString("base64url");
+}
+
+export function parseRiskReviewPayload(payload: string): PaymentIntent {
+  const value = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as unknown;
+  assertPaymentIntent(value);
+  return value;
 }
 
 export function evaluatePolicy(input: NormalizedPaymentIntentInput, policy: Policy): PolicyResult {
@@ -506,6 +530,50 @@ function parseJupiterQuoteResponse(value: unknown): {
 function requiredResponseString(value: unknown, field: string): string {
   if (typeof value !== "string" || value.length === 0) {
     throw new Error(`Jupiter quote response missing ${field}`);
+  }
+
+  return value;
+}
+
+function assertPaymentIntent(value: unknown): asserts value is PaymentIntent {
+  if (!value || typeof value !== "object") {
+    throw new Error("Risk Review payload must be a PaymentIntent object");
+  }
+
+  const candidate = value as Record<string, unknown>;
+  requiredPayloadString(candidate.intentId, "intentId");
+  requiredPayloadString(candidate.agent, "agent");
+  requiredPayloadString(candidate.payToken, "payToken");
+  requiredPayloadObject(candidate.settlement, "settlement");
+  requiredPayloadString(candidate.status, "status");
+  requiredPayloadString(candidate.decision, "decision");
+  requiredPayloadString(candidate.nextAction, "nextAction");
+  requiredPayloadString(candidate.riskLevel, "riskLevel");
+  requiredPayloadArray(candidate.reasons, "reasons");
+  requiredPayloadArray(candidate.policyChecks, "policyChecks");
+  requiredPayloadString(candidate.reviewUrl, "reviewUrl");
+  requiredPayloadString(candidate.createdAt, "createdAt");
+}
+
+function requiredPayloadString(value: unknown, field: string): string {
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(`Risk Review payload missing ${field}`);
+  }
+
+  return value;
+}
+
+function requiredPayloadObject(value: unknown, field: string): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`Risk Review payload missing ${field}`);
+  }
+
+  return value as Record<string, unknown>;
+}
+
+function requiredPayloadArray(value: unknown, field: string): unknown[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`Risk Review payload missing ${field}`);
   }
 
   return value;

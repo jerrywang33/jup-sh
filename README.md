@@ -206,6 +206,25 @@ const intent = await createPaymentIntent(
 `sdk:jupiter:live` is skipped by default. Set `JUP_SH_LIVE_JUPITER=1` to call
 Jupiter's quote API.
 
+SDK Risk Review URL export:
+
+```ts
+import { createPaymentIntent, createRiskReviewUrl } from "./sdk/index.js";
+
+const intent = await createPaymentIntent({
+  agent: "deepseek",
+  token: "SOL",
+  amount: 20,
+  settle: "USDC",
+});
+
+const reviewUrl = createRiskReviewUrl(intent, {
+  reviewBaseUrl: "https://www.jup.sh",
+});
+```
+
+This uses the same base64url fragment payload as `jup-sh intent export`.
+
 Alpha wrapper smoke test:
 
 ```bash

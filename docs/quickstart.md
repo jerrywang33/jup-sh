@@ -274,6 +274,33 @@ execute a swap.
 `sdk:jupiter:live` is skipped by default. Set `JUP_SH_LIVE_JUPITER=1` when you
 want to call Jupiter's live quote API from the example.
 
+Generate a Risk Review URL from the SDK:
+
+```ts
+import {
+  createPaymentIntent,
+  createRiskReviewUrl,
+} from "../sdk/index.js";
+
+const intent = await createPaymentIntent({
+  agent: "deepseek",
+  token: "SOL",
+  amount: 20,
+  settle: "USDC",
+});
+
+if (intent.nextAction === "open_review") {
+  const reviewUrl = createRiskReviewUrl(intent, {
+    reviewBaseUrl: "https://www.jup.sh",
+  });
+
+  console.log(reviewUrl);
+}
+```
+
+This uses the same `#intent=<base64url-json-payload>` model as CLI
+`intent export`, so the URL opens directly in the hosted Risk Review page.
+
 ## 8. Run The Release Gate
 
 Before a release checkpoint:

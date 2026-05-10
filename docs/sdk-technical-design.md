@@ -16,7 +16,7 @@ requiring a subprocess.
 The first SDK surface should feel like this:
 
 ```ts
-import { createPaymentIntent } from "./sdk";
+import { createPaymentIntent } from "./sdk/index.js";
 
 const intent = await createPaymentIntent({
   agent: "deepseek",
@@ -44,7 +44,7 @@ flowchart LR
   Policy["local policy"]
   Quote["mock quote provider<br/>Jupiter later"]
   Intent["PaymentIntent"]
-  Review["Risk Review URL"]
+  Review["Risk Review URL<br/>fragment payload"]
 
   App --> SDK
   SDK --> Policy
@@ -132,6 +132,52 @@ createMockSettlementQuote(input): SettlementQuote
 
 This keeps local examples stable and avoids external dependencies.
 
+### Risk Review Helpers
+
+```ts
+createRiskReviewUrl(intent, options?): string
+encodeRiskReviewPayload(intent): string
+parseRiskReviewPayload(payload): PaymentIntent
+```
+
+These helpers mirror the CLI `intent export` format:
+
+```txt
+https://jup.sh/pay/<intent_id>#intent=<base64url-json-payload>
+```
+
+The payload is:
+
+```txt
+base64url(JSON.stringify(PaymentIntent))
+```
+
+Example:
+
+```ts
+import {
+  createPaymentIntent,
+  createRiskReviewUrl,
+} from "./sdk/index.js";
+
+const intent = await createPaymentIntent({
+  agent: "deepseek",
+  token: "SOL",
+  amount: 20,
+  settle: "USDC",
+});
+
+if (intent.nextAction === "open_review") {
+  const reviewUrl = createRiskReviewUrl(intent, {
+    reviewBaseUrl: "https://www.jup.sh",
+  });
+  console.log(reviewUrl);
+}
+```
+
+The generated URL can be opened by the current static Risk Review page. The
+helper does not upload data to a server.
+
 ## Data Contract
 
 The SDK should reuse the same field names as the CLI JSON contract.
@@ -200,8 +246,9 @@ The first SDK implementation should include:
 - local deterministic policy checks;
 - mock settlement quote;
 - Jupiter quote-only provider;
+- Risk Review URL export helpers;
 - `createPaymentIntent`;
-- Node example;
+- Node examples;
 - typecheck in the release gate.
 
 It should not include:
@@ -216,8 +263,7 @@ It should not include:
 
 Once the local SDK surface is stable:
 
-1. Add SDK docs and examples for Risk Review.
-2. Decide whether npm package export should include CLI, SDK, or separate
+1. Decide whether npm package export should include CLI, SDK, or separate
    packages.
-3. Add transaction request creation only after policy and quote behavior are
+2. Add transaction request creation only after policy and quote behavior are
    stable.

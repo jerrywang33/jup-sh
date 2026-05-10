@@ -37,6 +37,18 @@ try {
     throw new Error(`unexpected nextAction: ${intent.nextAction}`);
   }
 
+  const reviewStdout = run("node", [join(outDir, "examples/node-agent-review.js")]);
+  const review = JSON.parse(reviewStdout);
+  if (review.intentId !== "intent_sdk_review_example") {
+    throw new Error(`unexpected review intentId: ${review.intentId}`);
+  }
+  if (review.parsedIntentId !== review.intentId) {
+    throw new Error("Risk Review payload did not round-trip to the same intent");
+  }
+  if (!review.reviewUrl.startsWith("https://www.jup.sh/pay/intent_sdk_review_example#intent=")) {
+    throw new Error(`unexpected review URL: ${review.reviewUrl}`);
+  }
+
   const jupiterCheck = run("node", [
     "--input-type=module",
     "--eval",
