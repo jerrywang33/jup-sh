@@ -2,6 +2,31 @@
 
 All notable changes to jup.sh will be documented in this file.
 
+## 0.1.0-alpha.3 - 2026-05-11
+
+### Added
+
+- Added top-level `jup-sh init` for first-run local workspace setup.
+- Added `jup.config.json` generation with defaults for:
+  - Risk Review base URL
+  - policy file path
+  - local intent store
+  - quote provider
+- Added config-aware defaults for `pay` and `intent` commands.
+- Added an Agent Integration guide for safe CLI usage from agents and scripts.
+- Updated Quickstart and npm README around the new `init -> pay --json`
+  workflow.
+
+### Not Included
+
+- No wallet signing.
+- No swap execution.
+- No Solana Pay transaction request generation.
+- No custody of funds.
+- No remote backend persistence.
+- No authentication.
+- No published SDK package yet.
+
 ## 0.1.0-alpha.2 - 2026-05-11
 
 ### Added

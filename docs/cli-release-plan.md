@@ -75,7 +75,7 @@ docs/releases/0.1.0-alpha.0.md
 Primary target:
 
 ```bash
-npx jup-sh pay --agent deepseek --token SOL --amount 20 --settle USDC
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC
 ```
 
 Installed target:

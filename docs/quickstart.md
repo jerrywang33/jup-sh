@@ -21,7 +21,13 @@ You need:
 
 - Node.js and npm.
 
-For the npm alpha, run:
+For the npm alpha, initialize a local workspace:
+
+```bash
+npx jup-sh@alpha init
+```
+
+Then create a payment intent:
 
 ```bash
 npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC --json
@@ -62,7 +68,30 @@ flowchart LR
 The CLI always creates a local intent record when the command is valid enough
 to evaluate. The policy decision controls what the caller should do next.
 
-## 1. Inspect The Default Policy
+## 1. Initialize Local Config
+
+```bash
+npx jup-sh@alpha init
+```
+
+This writes:
+
+```txt
+jup.config.json
+jup.policy.json
+```
+
+`jup.config.json` controls local paths and defaults. `jup.policy.json`
+controls risk thresholds. Use `--force` if you intentionally want to overwrite
+them.
+
+For source development, use:
+
+```bash
+npm run cli:alpha -- init
+```
+
+## 2. Inspect The Default Policy
 
 ```bash
 npm run cli:alpha -- policy show
@@ -77,7 +106,7 @@ The default policy is conservative:
 - unknown recipients require review;
 - high price impact requires review.
 
-Create a local policy file:
+Create or overwrite only the local policy file:
 
 ```bash
 npm run cli:alpha -- policy init
@@ -91,7 +120,7 @@ jup.policy.json
 
 Use `--force` if you intentionally want to overwrite it.
 
-## 2. Create A Payment Intent
+## 3. Create A Payment Intent
 
 ```bash
 npm run cli:alpha -- pay --agent deepseek --token SOL --amount 20 --settle USDC
@@ -106,7 +135,7 @@ This creates a local payment intent and saves it under:
 By default, the command uses the mock quote provider. That makes tests stable
 and does not call external APIs.
 
-## 3. Use JSON Mode For Agents
+## 4. Use JSON Mode For Agents
 
 Agents and scripts should use `--json`:
 
@@ -131,7 +160,9 @@ exit code and `nextAction`.
 The field-level contract is documented in
 [CLI JSON Contract](cli-json-contract.md).
 
-## 4. Test The Three Policy Outcomes
+For a fuller caller guide, see [Agent Integration](agent-integration.md).
+
+## 5. Test The Three Policy Outcomes
 
 Auto-pay candidate with a trusted recipient and small amount:
 
@@ -167,7 +198,7 @@ npm run cli:alpha -- pay \
   --json
 ```
 
-## 5. Use Jupiter Quote-Only Mode
+## 6. Use Jupiter Quote-Only Mode
 
 ```bash
 npm run cli:alpha -- pay \
@@ -198,7 +229,7 @@ JUPITER_API_KEY=...
 See [Jupiter Quote-Only Design](jupiter-quote-design.md) for the settlement
 boundary.
 
-## 6. Inspect Local Intents
+## 7. Inspect Local Intents
 
 List saved intents:
 
@@ -227,7 +258,7 @@ https://jup.sh/pay/intent_xxx#intent=<base64url-json-payload>
 See [Risk Review Export Design](risk-review-export-design.md) for the static
 review model.
 
-## 7. Try The SDK Surface
+## 8. Try The SDK Surface
 
 The first TypeScript SDK surface is local and source-only:
 

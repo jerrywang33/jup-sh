@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 const root = mkdtempSync(join(tmpdir(), "jup-sh-alpha-smoke-"));
 const store = join(root, "intents");
+const configPath = join(root, "jup.config.json");
 const policyPath = join(root, "jup.policy.json");
 
 function run(args, expectedStatus = 0) {
@@ -141,6 +142,14 @@ function assertPolicyCheckNames(intent, names) {
 }
 
 try {
+  console.log("alpha smoke: init");
+  const init = JSON.parse(
+    run(["init", "--config", configPath, "--policy", policyPath, "--json"])
+  );
+  if (init.configPath !== configPath || init.policyPath !== policyPath) {
+    throw new Error("init did not return expected config and policy paths");
+  }
+
   console.log("alpha smoke: policy show");
   const policy = run(["policy", "show"]);
   if (!policy.includes("jup.sh policy")) {

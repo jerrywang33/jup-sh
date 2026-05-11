@@ -13,7 +13,7 @@ The current package lives in:
 npm/
 ```
 
-It is now prepared for the `0.1.0-alpha.2` npm alpha.
+It is now prepared for the `0.1.0-alpha.3` npm alpha.
 
 ## Current Package Shape
 
@@ -38,7 +38,7 @@ node wrapper -> self-contained alpha CLI
 This is acceptable for the first npm alpha because users do not need Rust or a
 repository checkout. The npm alpha still does not move money.
 
-## Alpha 2 Dry Run
+## Alpha 3 Dry Run
 
 Run:
 
@@ -82,7 +82,7 @@ Confirm:
 - Risk Review export does not include private keys, signatures, swap
   transactions, or wallet secrets.
 - `CHANGELOG.md` has the release notes.
-- `docs/releases/0.1.0-alpha.2.md` matches the release scope.
+- `docs/releases/0.1.0-alpha.3.md` matches the release scope.
 - The GitHub release is marked as a pre-release.
 
 ## GitHub Release Draft
@@ -93,19 +93,19 @@ release:check` has passed.
 Recommended tag:
 
 ```txt
-v0.1.0-alpha.2
+v0.1.0-alpha.3
 ```
 
 Recommended title:
 
 ```txt
-jup.sh 0.1.0-alpha.2
+jup.sh 0.1.0-alpha.3
 ```
 
 Release notes source:
 
 ```txt
-docs/releases/0.1.0-alpha.2.md
+docs/releases/0.1.0-alpha.3.md
 ```
 
 Before creating the tag:
@@ -113,7 +113,7 @@ Before creating the tag:
 - run the required checks above;
 - confirm the working tree is clean;
 - confirm `npm/package.json` does not have `"private": true`;
-- confirm the npm alpha package uses `0.1.0-alpha.2`;
+- confirm the npm alpha package uses `0.1.0-alpha.3`;
 - confirm the release is described as quote-only / developer alpha;
 - mark the GitHub release as pre-release.
 

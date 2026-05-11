@@ -149,10 +149,12 @@ V1 includes:
 - CLI release plan in `docs/cli-release-plan.md`.
 - SDK technical design in `docs/sdk-technical-design.md`.
 - CLI JSON contract in `docs/cli-json-contract.md`.
+- Agent integration guide in `docs/agent-integration.md`.
 - npm alpha release checklist in `docs/npm-alpha-release-checklist.md`.
 - Draft alpha release notes in `docs/releases/0.1.0-alpha.0.md`.
 - Alpha.1 release notes in `docs/releases/0.1.0-alpha.1.md`.
 - Alpha.2 npm release notes in `docs/releases/0.1.0-alpha.2.md`.
+- Alpha.3 init release notes in `docs/releases/0.1.0-alpha.3.md`.
 - GitHub Pages developer docs in `docs/`.
 - Jupiter quote-only design in `docs/jupiter-quote-design.md`.
 - Risk Review export design in `docs/risk-review-export-design.md`.
@@ -173,6 +175,7 @@ npm run cli -- pay --agent deepseek --token SOL --amount 20 --settle USDC
 Published npm alpha command:
 
 ```bash
+npx jup-sh@alpha init
 npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC
 ```
 
@@ -364,6 +367,7 @@ requires an API key.
 Useful local commands:
 
 ```bash
+npm run cli:alpha -- init
 npm run cli -- policy show
 npm run cli -- policy show --json
 npm run cli -- policy init

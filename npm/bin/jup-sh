@@ -14,6 +14,13 @@ const DEFAULT_POLICY = {
   reviewUnknownRecipients: true,
 };
 
+const DEFAULT_CONFIG = {
+  reviewBaseUrl: "https://www.jup.sh",
+  policyPath: "jup.policy.json",
+  intentStore: ".jup-sh/intents",
+  quoteProvider: "mock",
+};
+
 const MOCK_PRICES_USDC = {
   USDC: 1,
   SOL: 150,
@@ -59,6 +66,11 @@ async function main() {
     process.exit(exitCodeForDecision(intent.decision));
   }
 
+  if (command === "init") {
+    runInit(args);
+    return;
+  }
+
   if (command === "policy") {
     runPolicy(args);
     return;
@@ -74,7 +86,9 @@ async function main() {
 
 async function runPay(args) {
   const options = parseOptions(args);
-  const policy = loadPolicy(options.policy);
+  const config = loadConfig(options.config);
+  const effectiveOptions = mergeConfigOptions(options, config);
+  const policy = loadPolicy(effectiveOptions.policy);
   const { settleAmount, settleToken } = parseSettlement(options);
   const input = {
     agent: required(options.agent, "agent"),
@@ -89,12 +103,12 @@ async function runPay(args) {
   const quote =
     prePolicy.decision === "rejected"
       ? null
-      : await quoteSettlement(input, options, policy);
+      : await quoteSettlement(input, effectiveOptions, policy);
   const finalResult = quote
     ? policyResultFromChecks([...prePolicy.checks, ...evaluateQuotePolicy(quote, policy)])
     : prePolicy;
   const intentId = `intent_${randomUUID().replaceAll("-", "")}`;
-  const reviewBaseUrl = (options.reviewBaseUrl ?? "https://jup.sh").replace(/\/+$/, "");
+  const reviewBaseUrl = (effectiveOptions.reviewBaseUrl ?? DEFAULT_CONFIG.reviewBaseUrl).replace(/\/+$/, "");
   const intent = {
     intentId,
     agent: input.agent,
@@ -116,8 +130,40 @@ async function runPay(args) {
     createdAt: new Date().toISOString(),
   };
 
-  saveIntent(intent, options.store);
+  saveIntent(intent, effectiveOptions.store);
   return intent;
+}
+
+function runInit(args) {
+  const options = parseOptions(args);
+  const configPath = options.config ?? "jup.config.json";
+  const policyPath = options.policy ?? DEFAULT_CONFIG.policyPath;
+  const config = {
+    ...DEFAULT_CONFIG,
+    policyPath,
+  };
+
+  assertWritable(configPath, options.force);
+  assertWritable(policyPath, options.force);
+  writeJsonFile(configPath, config);
+  writeJsonFile(policyPath, DEFAULT_POLICY);
+
+  const result = {
+    configPath,
+    policyPath,
+    intentStore: config.intentStore,
+    reviewBaseUrl: config.reviewBaseUrl,
+  };
+
+  if (options.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`wrote ${configPath}`);
+    console.log(`wrote ${policyPath}`);
+    console.log("");
+    console.log("Next:");
+    console.log("  jup-sh pay --agent deepseek --token SOL --amount 20 --settle USDC --json");
+  }
 }
 
 function runPolicy(args) {
@@ -139,7 +185,7 @@ function runPolicy(args) {
     if (existsSync(path) && !options.force) {
       throw new Error(`${path} already exists; pass --force to overwrite`);
     }
-    writeFileSync(path, `${JSON.stringify(DEFAULT_POLICY, null, 2)}\n`);
+    writeJsonFile(path, DEFAULT_POLICY);
     console.log(`wrote ${path}`);
     return;
   }
@@ -150,10 +196,12 @@ function runPolicy(args) {
 function runIntent(args) {
   const [subcommand, ...rest] = args;
   const options = parseOptions(rest);
+  const config = loadConfig(options.config);
+  const effectiveOptions = mergeConfigOptions(options, config);
 
   if (subcommand === "list") {
     const limit = Number(options.limit ?? 20);
-    const intents = listIntents(options.store).slice(0, limit);
+    const intents = listIntents(effectiveOptions.store).slice(0, limit);
     if (options.json) {
       console.log(JSON.stringify(intents, null, 2));
     } else {
@@ -166,7 +214,7 @@ function runIntent(args) {
 
   if (subcommand === "show") {
     const [intentId] = rest.filter((item) => !item.startsWith("--"));
-    const intent = loadIntent(required(intentId, "intent_id"), options.store);
+    const intent = loadIntent(required(intentId, "intent_id"), effectiveOptions.store);
     if (options.json) {
       console.log(JSON.stringify(intent, null, 2));
     } else {
@@ -177,12 +225,12 @@ function runIntent(args) {
 
   if (subcommand === "export") {
     const [intentId] = rest.filter((item) => !item.startsWith("--"));
-    const intent = loadIntent(required(intentId, "intent_id"), options.store);
+    const intent = loadIntent(required(intentId, "intent_id"), effectiveOptions.store);
     const payload = Buffer.from(JSON.stringify(intent), "utf8").toString("base64url");
     if (options.payloadOnly) {
       console.log(payload);
     } else {
-      const baseUrl = (options.reviewBaseUrl ?? "https://jup.sh").replace(/\/+$/, "");
+      const baseUrl = (effectiveOptions.reviewBaseUrl ?? DEFAULT_CONFIG.reviewBaseUrl).replace(/\/+$/, "");
       console.log(`${baseUrl}/pay/${intent.intentId}#intent=${payload}`);
     }
     return;
@@ -252,6 +300,42 @@ function loadPolicy(path) {
     ...clonePolicy(DEFAULT_POLICY),
     ...JSON.parse(readFileSync(effectivePath, "utf8")),
   };
+}
+
+function loadConfig(path) {
+  const defaultPath = "jup.config.json";
+  const effectivePath = path ?? (existsSync(defaultPath) ? defaultPath : null);
+  if (!effectivePath) return { ...cloneConfig(DEFAULT_CONFIG), loaded: false };
+
+  return {
+    ...cloneConfig(DEFAULT_CONFIG),
+    ...JSON.parse(readFileSync(effectivePath, "utf8")),
+    loaded: true,
+  };
+}
+
+function cloneConfig(config) {
+  return { ...config };
+}
+
+function mergeConfigOptions(options, config) {
+  return {
+    ...options,
+    policy: options.policy ?? (config.loaded ? config.policyPath : undefined),
+    store: options.store ?? config.intentStore,
+    reviewBaseUrl: options.reviewBaseUrl ?? config.reviewBaseUrl,
+    quoteProvider: options.quoteProvider ?? config.quoteProvider,
+  };
+}
+
+function assertWritable(path, force) {
+  if (existsSync(path) && !force) {
+    throw new Error(`${path} already exists; pass --force to overwrite`);
+  }
+}
+
+function writeJsonFile(path, value) {
+  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 function clonePolicy(policy) {
@@ -474,6 +558,7 @@ function printHelp() {
   console.log("jup-sh alpha CLI");
   console.log("");
   console.log("Commands:");
+  console.log("  init [--force] [--json]");
   console.log("  pay --agent deepseek --token SOL --amount 20 --settle USDC [--json]");
   console.log("  policy show [--json]");
   console.log("  policy init [--force]");

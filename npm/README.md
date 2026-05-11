@@ -17,6 +17,7 @@ Current alpha status:
 Install or run with `npx`:
 
 ```bash
+npx jup-sh@alpha init
 npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC --json
 ```
 
@@ -26,12 +27,14 @@ Rust workspace.
 Command shape:
 
 ```bash
+jup-sh init
 jup-sh pay --agent deepseek --token SOL --amount 20 --settle USDC --json
 ```
 
 Useful commands:
 
 ```bash
+jup-sh init
 jup-sh policy show
 jup-sh policy init
 jup-sh intent list

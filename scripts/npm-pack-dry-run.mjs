@@ -65,7 +65,7 @@ if (packageJson.private === true) {
   throw new Error("npm alpha package is still private");
 }
 
-if (packageJson.version !== "0.1.0-alpha.2") {
+if (packageJson.version !== "0.1.0-alpha.3") {
   throw new Error(`unexpected npm alpha version: ${packageJson.version}`);
 }
 

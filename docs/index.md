@@ -24,11 +24,13 @@ flowchart LR
   A["Architecture<br/>system model"]
   B["Quickstart<br/>run locally"]
   C["CLI JSON Contract<br/>agent interface"]
+  F["Agent Integration<br/>safe caller pattern"]
   D["Jupiter Quote Design<br/>settlement boundary"]
   E["Risk Review Export<br/>human fallback"]
 
   A --> B --> C
-  C --> D
+  C --> F
+  F --> D
   C --> E
 ```
 
@@ -37,15 +39,17 @@ Recommended order:
 1. [Architecture](architecture.md) - system boundary, diagrams, data model.
 2. [Quickstart](quickstart.md) - run the alpha locally.
 3. [CLI JSON Contract](cli-json-contract.md) - agent-facing output and exit codes.
-4. [Jupiter Quote-Only Design](jupiter-quote-design.md) - token-to-USDC quote boundary.
-5. [Risk Review Export Design](risk-review-export-design.md) - static review URL model.
-6. [SDK Technical Design](sdk-technical-design.md) - first TypeScript SDK surface.
-7. [0.1.0-alpha.1](releases/0.1.0-alpha.1.md) - SDK risk-layer checkpoint.
-8. [0.1.0-alpha.2](releases/0.1.0-alpha.2.md) - npm alpha checkpoint.
+4. [Agent Integration](agent-integration.md) - safe caller pattern for agents.
+5. [Jupiter Quote-Only Design](jupiter-quote-design.md) - token-to-USDC quote boundary.
+6. [Risk Review Export Design](risk-review-export-design.md) - static review URL model.
+7. [SDK Technical Design](sdk-technical-design.md) - first TypeScript SDK surface.
+8. [0.1.0-alpha.1](releases/0.1.0-alpha.1.md) - SDK risk-layer checkpoint.
+9. [0.1.0-alpha.2](releases/0.1.0-alpha.2.md) - npm alpha checkpoint.
+10. [0.1.0-alpha.3](releases/0.1.0-alpha.3.md) - CLI init checkpoint.
 
 ## Current Alpha
 
-The current checkpoint is `v0.1.0-alpha.2`.
+The current checkpoint is `v0.1.0-alpha.3`.
 
 The first milestone, `v0.1.0-alpha.0`, established the source-run CLI, JSON
 contract, local policy checks, Jupiter quote-only estimates, local intent
@@ -53,6 +57,7 @@ storage, and static Risk Review export.
 
 The alpha.1 checkpoint focuses on the SDK risk layer and Risk Review
 explainability. The alpha.2 checkpoint adds the first public npm alpha package.
+The alpha.3 checkpoint adds the first-run `jup-sh init` workflow.
 
 It includes:
 
@@ -61,6 +66,7 @@ It includes:
 - mock settlement quotes;
 - optional Jupiter quote-only settlement estimates;
 - local intent storage;
+- local workspace initialization with `jup-sh init`;
 - Risk Review URL export;
 - hosted static Risk Review rendering;
 - source-only TypeScript SDK helpers for payment intents, Jupiter quote-only

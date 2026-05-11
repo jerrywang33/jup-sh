@@ -4,3 +4,5 @@ node_modules/
 .wrangler/
 rust/target/
 .jup-sh/
+jup.config.json
+jup.policy.json
