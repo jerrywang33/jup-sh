@@ -82,6 +82,7 @@ Run the npm alpha:
 
 ```bash
 npx jup-sh@alpha init
+npx jup-sh@alpha doctor
 npx jup-sh@alpha policy trust api.vendor.example
 npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
 ```
@@ -189,6 +190,7 @@ V1 includes:
 - Alpha.3 init release notes in `docs/releases/0.1.0-alpha.3.md`.
 - Alpha.4 policy tuning release notes in `docs/releases/0.1.0-alpha.4.md`.
 - Alpha.5 review shortcut release notes in `docs/releases/0.1.0-alpha.5.md`.
+- Alpha.6 doctor release notes in `docs/releases/0.1.0-alpha.6.md`.
 - GitHub Pages developer docs in `docs/`.
 - Jupiter quote-only design in `docs/jupiter-quote-design.md`.
 - Risk Review export design in `docs/risk-review-export-design.md`.
@@ -198,6 +200,7 @@ Current npm alpha flow:
 
 ```bash
 npx jup-sh@alpha init
+npx jup-sh@alpha doctor
 npx jup-sh@alpha policy trust api.vendor.example
 npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
 ```

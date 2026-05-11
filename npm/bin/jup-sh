@@ -4,6 +4,8 @@ const { randomUUID } = require("node:crypto");
 const { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } = require("node:fs");
 const { join, resolve } = require("node:path");
 
+const PACKAGE_JSON = JSON.parse(readFileSync(resolve(__dirname, "..", "package.json"), "utf8"));
+
 const DEFAULT_POLICY = {
   maxAutoSettleUSDC: 5,
   maxAllowedSettleUSDC: 100,
@@ -83,6 +85,11 @@ async function main() {
 
   if (command === "review") {
     runReview(args);
+    return;
+  }
+
+  if (command === "doctor") {
+    runDoctor(args);
     return;
   }
 
@@ -277,6 +284,65 @@ function runReview(args) {
   const effectiveOptions = mergeConfigOptions(options, config);
   const intentId = required(firstPositional(args), "intent_id");
   printReviewExport(intentId, effectiveOptions, options);
+}
+
+function runDoctor(args) {
+  const options = parseOptions(args);
+  const configPath = options.config ?? "jup.config.json";
+  const configFound = existsSync(configPath);
+  const config = configFound ? loadConfig(options.config) : { ...cloneConfig(DEFAULT_CONFIG), loaded: false };
+  const effectiveOptions = mergeConfigOptions(options, config);
+  const policyPath = effectiveOptions.policy ?? config.policyPath ?? DEFAULT_CONFIG.policyPath;
+  const policyFound = existsSync(policyPath);
+  const policy = loadPolicy(policyFound ? policyPath : undefined);
+  const intentStore = effectiveOptions.store ?? DEFAULT_CONFIG.intentStore;
+  const intentStoreFound = existsSync(intentStore);
+  const intentCount = listIntents(intentStore).length;
+  const warnings = [];
+
+  if (!configFound) {
+    warnings.push("jup.config.json not found; run jup-sh init");
+  }
+  if (!policyFound) {
+    warnings.push(`${policyPath} not found; default policy is being used`);
+  }
+  if (policy.maxAutoSettleUSDC > policy.maxAllowedSettleUSDC) {
+    warnings.push("maxAutoSettleUSDC is greater than maxAllowedSettleUSDC");
+  }
+
+  const result = {
+    status: warnings.length === 0 ? "ok" : "warning",
+    cliVersion: PACKAGE_JSON.version,
+    packageName: PACKAGE_JSON.name,
+    config: {
+      path: configPath,
+      found: configFound,
+    },
+    policy: {
+      path: policyPath,
+      found: policyFound,
+      maxAutoSettleUSDC: policy.maxAutoSettleUSDC,
+      maxAllowedSettleUSDC: policy.maxAllowedSettleUSDC,
+      maxPriceImpactBps: policy.maxPriceImpactBps,
+      trustedRecipients: policy.trustedRecipients,
+      verifiedTokens: policy.verifiedTokens,
+      reviewUnknownRecipients: policy.reviewUnknownRecipients,
+    },
+    intentStore: {
+      path: intentStore,
+      found: intentStoreFound,
+      count: intentCount,
+    },
+    reviewBaseUrl: effectiveOptions.reviewBaseUrl ?? DEFAULT_CONFIG.reviewBaseUrl,
+    quoteProvider: effectiveOptions.quoteProvider ?? DEFAULT_CONFIG.quoteProvider,
+    warnings,
+  };
+
+  if (options.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    printDoctor(result);
+  }
 }
 
 function printReviewExport(intentId, effectiveOptions, options) {
@@ -684,6 +750,31 @@ function listIntents(store) {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+function printDoctor(result) {
+  console.log("jup.sh doctor");
+  console.log("");
+  console.log(`CLI version: ${result.cliVersion}`);
+  console.log(`Config: ${result.config.found ? "found" : "missing"} ${result.config.path}`);
+  console.log(`Policy: ${result.policy.found ? "found" : "missing"} ${result.policy.path}`);
+  console.log(`Intent store: ${result.intentStore.path} (${result.intentStore.count} intents)`);
+  console.log(`Review URL: ${result.reviewBaseUrl}`);
+  console.log(`Quote provider: ${result.quoteProvider}`);
+  console.log(
+    `Trusted recipients: ${
+      result.policy.trustedRecipients.length ? result.policy.trustedRecipients.join(", ") : "(none)"
+    }`
+  );
+  if (result.warnings.length > 0) {
+    console.log("");
+    console.log("Warnings:");
+    for (const warning of result.warnings) {
+      console.log(`- ${warning}`);
+    }
+  }
+  console.log("");
+  console.log(`Status: ${result.status}`);
+}
+
 function printPolicy(policy) {
   console.log("jup.sh policy");
   console.log(`Max auto-pay amount: ${trimNumber(policy.maxAutoSettleUSDC)} USDC`);
@@ -729,6 +820,7 @@ function printHelp() {
   console.log("  intent show <intent_id> [--json]");
   console.log("  intent export <intent_id> [--payload-only]");
   console.log("  review <intent_id> [--json] [--payload-only]");
+  console.log("  doctor [--json]");
 }
 
 function exitCodeForDecision(decision) {

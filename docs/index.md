@@ -29,6 +29,12 @@ Install nothing globally. Start with `npx`:
 npx jup-sh@alpha init
 ```
 
+Check the local workspace:
+
+```bash
+npx jup-sh@alpha doctor
+```
+
 Trust a known API or vendor recipient:
 
 ```bash
@@ -90,10 +96,11 @@ Recommended order:
 10. [0.1.0-alpha.3](releases/0.1.0-alpha.3.md) - CLI init checkpoint.
 11. [0.1.0-alpha.4](releases/0.1.0-alpha.4.md) - policy tuning checkpoint.
 12. [0.1.0-alpha.5](releases/0.1.0-alpha.5.md) - review shortcut checkpoint.
+13. [0.1.0-alpha.6](releases/0.1.0-alpha.6.md) - doctor checkpoint.
 
 ## Current Alpha
 
-The current checkpoint is `v0.1.0-alpha.5`.
+The current checkpoint is `v0.1.0-alpha.6`.
 
 The first milestone, `v0.1.0-alpha.0`, established the source-run CLI, JSON
 contract, local policy checks, Jupiter quote-only estimates, local intent
@@ -104,6 +111,7 @@ explainability. The alpha.2 checkpoint adds the first public npm alpha package.
 The alpha.3 checkpoint adds the first-run `jup-sh init` workflow.
 The alpha.4 checkpoint adds local policy tuning commands.
 The alpha.5 checkpoint adds a top-level `jup-sh review` shortcut.
+The alpha.6 checkpoint adds local workspace diagnostics with `jup-sh doctor`.
 
 It includes:
 
@@ -117,6 +125,7 @@ It includes:
 - local policy tuning with `policy trust`, `policy untrust`, and `policy set`;
 - Risk Review URL export;
 - top-level Risk Review URL shortcut with `jup-sh review`;
+- local workspace diagnostics with `jup-sh doctor`;
 - hosted static Risk Review rendering;
 - source-only TypeScript SDK helpers for payment intents, Jupiter quote-only
   estimates, and Risk Review URL export;

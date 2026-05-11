@@ -172,6 +172,15 @@ try {
     throw new Error("policy set did not update maxAutoSettleUSDC");
   }
 
+  console.log("alpha smoke: doctor json");
+  const doctor = JSON.parse(run(["doctor", "--config", configPath, "--json"]));
+  if (doctor.status !== "ok" || doctor.config.found !== true || doctor.policy.found !== true) {
+    throw new Error("doctor --json did not report initialized workspace");
+  }
+  if (!doctor.policy.trustedRecipients.includes("api.vendor.example")) {
+    throw new Error("doctor --json did not include trusted recipient");
+  }
+
   writeFileSync(
     policyPath,
     JSON.stringify(

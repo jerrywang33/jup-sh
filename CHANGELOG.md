@@ -2,6 +2,28 @@
 
 All notable changes to jup.sh will be documented in this file.
 
+## 0.1.0-alpha.6 - 2026-05-11
+
+### Added
+
+- Added `jup-sh doctor` for local workspace diagnostics.
+- Added `jup-sh doctor --json` for agents and scripts.
+- Doctor now reports CLI version, config state, policy state, intent store,
+  review base URL, quote provider, trusted recipients, and warnings.
+- Updated README, Quickstart, npm README, and Agent Integration docs with the
+  doctor command.
+- Extended alpha smoke tests to cover doctor JSON output.
+
+### Not Included
+
+- No wallet signing.
+- No swap execution.
+- No Solana Pay transaction request generation.
+- No custody of funds.
+- No remote backend persistence.
+- No authentication.
+- No published SDK package yet.
+
 ## 0.1.0-alpha.5 - 2026-05-11
 
 ### Added

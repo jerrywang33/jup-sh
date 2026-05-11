@@ -132,6 +132,13 @@ Raise the auto-pay limit:
 npm run cli:alpha -- policy set max-auto 10
 ```
 
+Check the local workspace:
+
+```bash
+npm run cli:alpha -- doctor
+npm run cli:alpha -- doctor --json
+```
+
 ## 3. Create A Payment Intent
 
 ```bash

@@ -78,6 +78,18 @@ jup.policy.json
 
 Use `--force` only when you intentionally want to overwrite local files.
 
+Check the local workspace:
+
+```bash
+npx jup-sh@alpha doctor
+```
+
+Agents and scripts can use:
+
+```bash
+npx jup-sh@alpha doctor --json
+```
+
 ## 2. Call `pay --json`
 
 Agents should use JSON mode and branch on the process exit code:
