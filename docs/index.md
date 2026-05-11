@@ -87,10 +87,11 @@ Recommended order:
 11. [0.1.0-alpha.4](releases/0.1.0-alpha.4.md) - policy tuning checkpoint.
 12. [0.1.0-alpha.5](releases/0.1.0-alpha.5.md) - review shortcut checkpoint.
 13. [0.1.0-alpha.6](releases/0.1.0-alpha.6.md) - doctor checkpoint.
+14. [0.1.0-alpha.7](releases/0.1.0-alpha.7.md) - review handoff checkpoint.
 
 ## Current Alpha
 
-The current checkpoint is `v0.1.0-alpha.6`.
+The current checkpoint is `v0.1.0-alpha.7`.
 
 The first milestone, `v0.1.0-alpha.0`, established the source-run CLI, JSON
 contract, local policy checks, Jupiter quote-only estimates, local intent
@@ -102,6 +103,7 @@ The alpha.3 checkpoint adds the first-run `jup-sh init` workflow.
 The alpha.4 checkpoint adds local policy tuning commands.
 The alpha.5 checkpoint adds a top-level `jup-sh review` shortcut.
 The alpha.6 checkpoint adds local workspace diagnostics with `jup-sh doctor`.
+The alpha.7 checkpoint adds full review handoff metadata to `pay --json`.
 
 It includes:
 
@@ -116,6 +118,7 @@ It includes:
 - Risk Review URL export;
 - top-level Risk Review URL shortcut with `jup-sh review`;
 - local workspace diagnostics with `jup-sh doctor`;
+- review handoff fields in `pay --json` and `review --json`;
 - hosted static Risk Review rendering;
 - source-only TypeScript SDK helpers for payment intents, Jupiter quote-only
   estimates, and Risk Review URL export;
