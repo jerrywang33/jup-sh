@@ -1,56 +1,51 @@
 ---
 title: CLI Release Plan
-description: Release path from source-run Rust CLI to public npm distribution.
+description: Release path for the jup.sh npm alpha CLI.
 ---
 
 # CLI Release Plan
 
-This document describes how the current local Rust CLI should become a public
-developer tool.
+This document tracks how the `jup-sh` CLI is being released as a public npm
+alpha.
 
 ## Current State
 
-Today the CLI runs from source:
+The public alpha is available through npm:
 
 ```bash
-npm run cli -- pay --agent deepseek --token SOL --amount 20 --settle USDC
+npx jup-sh@alpha init
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC --json
 ```
 
-The actual binary name is already:
+The package name and binary are:
 
-```bash
+```txt
 jup-sh
 ```
 
-The repository is not published as an npm package yet. The root `package.json`
-is intentionally private while the CLI is still changing quickly.
-
-There is now a local npm wrapper prototype:
+Source development still supports:
 
 ```bash
 npm run cli:alpha -- pay --agent deepseek --token SOL --amount 20 --settle USDC
+npm run cli -- pay --agent deepseek --token SOL --amount 20 --settle USDC
 ```
 
-It calls the Rust CLI from the current repository. It is a development bridge,
-not a published package.
-
-The wrapper has a smoke test:
+The release gate is:
 
 ```bash
-npm run alpha:smoke
+npm run release:check
 ```
 
-It verifies `policy show`, `pay`, `intent list`, and `intent export` through
-the npm wrapper.
+The alpha smoke test covers the CLI contract for agents:
 
-The smoke test now covers the alpha CLI contract for agents:
-
+- `init` writes local config and policy files
+- `policy trust` and `policy set` mutate local risk policy
 - `pay --json` emits parseable JSON only
 - `auto_pay` exits with code `0`
 - `review_required` exits with code `2`
 - `rejected` exits with code `1`
 - key payment intent fields match `docs/cli-json-contract.md`
-- intent list/export still work after those outcomes
+- `intent list`, `intent export`, and `review` work after those outcomes
 
 The package dry run is available as:
 
@@ -64,18 +59,20 @@ The detailed release checklist is in:
 docs/npm-alpha-release-checklist.md
 ```
 
-Draft release notes for the first alpha checkpoint are in:
+Release notes are in:
 
 ```txt
-docs/releases/0.1.0-alpha.0.md
+docs/releases/
 ```
 
 ## Target Developer Experience
 
-Primary target:
+Primary public path:
 
 ```bash
-npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC
+npx jup-sh@alpha init
+npx jup-sh@alpha policy trust api.vendor.example
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
 ```
 
 Installed target:
@@ -104,16 +101,18 @@ Cargo install and Homebrew can come later.
 
 ## Packaging Approach
 
-Keep the payment logic in Rust:
+The current npm alpha package is a self-contained Node.js CLI. It does not
+require Rust or a repository checkout.
+
+The repository still keeps Rust and TypeScript source paths for development:
 
 ```txt
 rust/crates/core
 rust/crates/cli
+sdk/
 ```
 
-Publish an npm wrapper package named `jup-sh` that exposes the `jup-sh` binary.
-
-Possible release structure:
+Current npm package:
 
 ```txt
 npm/
@@ -122,34 +121,12 @@ npm/
     jup-sh
 ```
 
-Current local wrapper:
-
-```txt
-npm/package.json
-npm/bin/jup-sh
-```
-
-The current wrapper shells out to:
-
-```bash
-cargo run --quiet --
-```
-
-That is acceptable for Alpha 0 validation, but should be replaced before public
-npm release.
-
-The wrapper can either:
-
-1. download a prebuilt Rust binary for the user's platform, or
-2. package prebuilt binaries inside npm releases, or
-3. temporarily run the Rust binary from source for early alpha users.
-
-Option 1 is the cleanest long-term route. Option 3 is acceptable only for a
-private alpha.
+Longer term, the npm package may wrap prebuilt Rust binaries once the CLI
+surface stabilizes. The public command shape should stay stable.
 
 ## Release Criteria
 
-Before publishing to npm, the CLI should have:
+Before moving beyond alpha, the CLI should have:
 
 - stable command names for `pay`, `policy`, and `intent`
 - clear JSON output for agents
@@ -159,7 +136,7 @@ Before publishing to npm, the CLI should have:
 - `README.md` Quickstart that matches the published install path
 - GitHub release notes based on `CHANGELOG.md`
 - npm package dry-run checklist
-- GitHub pre-release draft for `v0.1.0-alpha.0`
+- GitHub pre-release notes for each alpha checkpoint
 - basic smoke tests for:
   - `jup-sh policy show`
   - `jup-sh pay ...`
@@ -169,7 +146,7 @@ Before publishing to npm, the CLI should have:
 
 ## Current Non-Goals
 
-The first npm release should not include:
+The npm alpha should not include:
 
 - wallet signing
 - swap execution
@@ -188,21 +165,41 @@ npm run cli -- ...
 npm run cli:alpha -- ...
 ```
 
-This is the current state.
+Completed.
 
 ### Alpha 1
 
-Npm package with command:
+SDK risk-layer checkpoint.
 
-```bash
-npx jup-sh ...
-```
-
-Still quote-only and local-intent-only.
+Completed.
 
 ### Alpha 2
 
-Add a small SDK or MCP surface after the CLI command shape stabilizes.
+First public npm alpha:
+
+```bash
+npx jup-sh@alpha ...
+```
+
+Completed.
+
+### Alpha 3
+
+First-run init workflow.
+
+Completed.
+
+### Alpha 4
+
+Policy tuning from CLI.
+
+Completed.
+
+### Alpha 5
+
+Top-level Risk Review shortcut.
+
+Completed.
 
 ### Beta
 

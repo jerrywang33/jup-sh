@@ -50,8 +50,8 @@ Review rendering. The Solana transaction layer is intentionally future work.
 ```mermaid
 flowchart TB
   subgraph Interface["Interface layer"]
-    CLI["CLI<br/>source-run today"]
-    SDK["SDK<br/>planned"]
+    CLI["CLI<br/>npm alpha + source-run"]
+    SDK["SDK<br/>source-only"]
     ReviewUI["Risk Review UI<br/>hosted static page"]
   end
 
@@ -94,9 +94,10 @@ should remain stable.
 
 ## Current Alpha Runtime Flow
 
-The alpha flow is source-run and local. It is useful because it validates the
-contract an agent would actually consume: command input, structured output,
-exit codes, policy checks, and a review URL when needed.
+The alpha flow is local and available through `npx jup-sh@alpha`. It is useful
+because it validates the contract an agent would actually consume: command
+input, structured output, exit codes, policy checks, and a review URL when
+needed.
 
 ```mermaid
 sequenceDiagram

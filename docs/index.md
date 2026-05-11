@@ -9,6 +9,12 @@ Risk and settlement for Solana agent payments.
 
 `jup.sh` is an early developer alpha for agent-native payments on Solana.
 
+The npm alpha is live:
+
+```bash
+npx jup-sh@alpha
+```
+
 ```txt
 Agents pay with any verified token.
 Recipients settle in USDC.
@@ -101,7 +107,8 @@ The alpha.5 checkpoint adds a top-level `jup-sh review` shortcut.
 
 It includes:
 
-- source-run Rust CLI;
+- public npm alpha CLI;
+- source-run Rust CLI for development;
 - local policy checks;
 - mock settlement quotes;
 - optional Jupiter quote-only settlement estimates;

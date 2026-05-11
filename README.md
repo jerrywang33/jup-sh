@@ -15,8 +15,9 @@ Policy decides when humans step in.
 
 ## Status
 
-This repository currently contains a static V1 product prototype, an early
-local Rust CLI prototype, and a source-only TypeScript SDK prototype.
+This repository currently contains a public npm alpha CLI, a static V1 product
+site, a hosted Risk Review prototype, and a source-only TypeScript SDK
+prototype.
 
 It is not a production payment system and does not execute real payments yet.
 
@@ -32,17 +33,18 @@ Developer docs:
 https://jerrywang33.github.io/jup-sh/
 ```
 
-## Current MVP
+## Current Alpha
 
-The current MVP is an npm alpha CLI plus static Risk Review prototype:
+The current alpha is an npm CLI plus static Risk Review prototype:
 
 ```txt
-policy init/show
+init
+-> policy trust/set
 -> payment intent
 -> mock or Jupiter quote
 -> quote-aware policy checks
 -> local intent store
--> Risk Review URL export
+-> review URL shortcut
 -> hosted Risk Review page
 ```
 
@@ -160,13 +162,14 @@ The CLI saves generated intents locally:
 .jup-sh/intents/<intent_id>.json
 ```
 
-## Current Prototype
+## Current Surface
 
 V1 includes:
 
 - A pay.sh-inspired landing page.
 - A command-first agent payment concept.
 - A Risk Review prototype.
+- A public npm alpha package: `jup-sh`.
 - A minimal TypeScript SDK prototype in `sdk/`.
 - SDK policy profiles for `sandbox`, `balanced`, and `strict` risk posture.
 - SDK trusted-recipient helper for known API/vendor destinations.
@@ -191,29 +194,24 @@ V1 includes:
 - Risk Review export design in `docs/risk-review-export-design.md`.
 - X / Twitter content notes in `docs/x-content.md`.
 
-Current demo command:
-
-```bash
-jup-sh pay --agent deepseek --token SOL --amount 20 --settle USDC
-```
-
-Current source command:
-
-```bash
-npm run cli -- pay --agent deepseek --token SOL --amount 20 --settle USDC
-```
-
-Published npm alpha command:
+Current npm alpha flow:
 
 ```bash
 npx jup-sh@alpha init
-npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC
+npx jup-sh@alpha policy trust api.vendor.example
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
 ```
 
-Local npm wrapper prototype:
+Review-required shortcut:
 
 ```bash
-npm run cli:alpha -- pay --agent deepseek --token SOL --amount 20 --settle USDC
+npx jup-sh@alpha review intent_xxx
+```
+
+Source development command:
+
+```bash
+npm run cli -- pay --agent deepseek --token SOL --amount 20 --settle USDC
 ```
 
 Local TypeScript SDK example:

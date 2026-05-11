@@ -15,8 +15,8 @@ Policy decides when humans step in.
 ```
 
 The product is intentionally early. The current version is a public website,
-developer docs, and source-run CLI alpha. It is not a production payment
-system.
+developer docs, public npm alpha CLI, and source-only SDK prototype. It is not
+a production payment system.
 
 ## Positioning
 
@@ -73,8 +73,8 @@ Current public surface:
 - website at `https://www.jup.sh`;
 - GitHub repo at `https://github.com/jerrywang33/jup-sh`;
 - GitHub Pages docs at `https://jerrywang33.github.io/jup-sh/`;
-- source-run Rust CLI;
-- local npm wrapper prototype;
+- public npm alpha package: `jup-sh`;
+- source-run Rust CLI for development;
 - static Risk Review page;
 - Cloudflare Pages deployment.
 
@@ -93,16 +93,20 @@ The homepage communicates the target stack:
 
 ## Current Alpha Capabilities
 
-The source alpha implements:
+The npm alpha implements:
 
+- local workspace initialization with `jup-sh init`;
 - local payment intent creation;
 - deterministic policy checks;
+- local policy tuning through `policy trust`, `policy untrust`, and
+  `policy set`;
 - mock settlement quote provider;
 - optional Jupiter quote-only estimates;
 - quote-aware risk checks;
 - local policy inspection and initialization;
 - local intent persistence under `.jup-sh/intents`;
 - Risk Review URL export through `intent export`;
+- top-level Risk Review shortcut through `jup-sh review`;
 - `intent list` and `intent show`;
 - agent-facing JSON output;
 - CLI exit code contract;
