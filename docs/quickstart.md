@@ -5,7 +5,7 @@ description: Run the jup.sh alpha locally or with npx.
 
 # Quickstart
 
-This guide runs the current `jup.sh` alpha with `npx` or from source.
+This guide runs the current `jup.sh` alpha with `npx`.
 
 The alpha is useful for testing the agent-facing payment contract:
 
@@ -21,16 +21,20 @@ You need:
 
 - Node.js and npm.
 
-For the npm alpha, initialize a local workspace:
+The homepage keeps the first step intentionally short:
 
 ```bash
 npx jup-sh@alpha init
+npx jup-sh@alpha doctor
 ```
 
-Then create a payment intent:
+This page expands that into the full developer flow:
 
 ```bash
-npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC --json
+npx jup-sh@alpha init
+npx jup-sh@alpha doctor
+npx jup-sh@alpha policy trust api.vendor.example
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
 ```
 
 For source development, you also need a working Rust toolchain and git:
@@ -91,10 +95,27 @@ For source development, use:
 npm run cli:alpha -- init
 ```
 
-## 2. Inspect The Default Policy
+## 2. Check The Workspace
 
 ```bash
-npm run cli:alpha -- policy show
+npx jup-sh@alpha doctor
+npx jup-sh@alpha doctor --json
+```
+
+`doctor` verifies the local config, policy file, intent store, review URL,
+quote provider, and trusted recipients. It is the fastest way to confirm that
+the workspace is ready before an agent creates payment intents.
+
+For source development, use:
+
+```bash
+npm run cli:alpha -- doctor
+```
+
+## 3. Configure Local Policy
+
+```bash
+npx jup-sh@alpha policy show
 ```
 
 The default policy is conservative:
@@ -109,7 +130,7 @@ The default policy is conservative:
 Create or overwrite only the local policy file:
 
 ```bash
-npm run cli:alpha -- policy init
+npx jup-sh@alpha policy init
 ```
 
 This writes:
@@ -123,26 +144,21 @@ Use `--force` if you intentionally want to overwrite it.
 Trust a known API or vendor recipient:
 
 ```bash
-npm run cli:alpha -- policy trust api.vendor.example
+npx jup-sh@alpha policy trust api.vendor.example
 ```
 
 Raise the auto-pay limit:
 
 ```bash
-npm run cli:alpha -- policy set max-auto 10
+npx jup-sh@alpha policy set max-auto 10
 ```
 
-Check the local workspace:
+For source development, prefix the same commands with `npm run cli:alpha --`.
+
+## 4. Create A Payment Intent
 
 ```bash
-npm run cli:alpha -- doctor
-npm run cli:alpha -- doctor --json
-```
-
-## 3. Create A Payment Intent
-
-```bash
-npm run cli:alpha -- pay --agent deepseek --token SOL --amount 20 --settle USDC
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 20 --settle USDC
 ```
 
 This creates a local payment intent and saves it under:
@@ -154,12 +170,12 @@ This creates a local payment intent and saves it under:
 By default, the command uses the mock quote provider. That makes tests stable
 and does not call external APIs.
 
-## 4. Use JSON Mode For Agents
+## 5. Use JSON Mode For Agents
 
 Agents and scripts should use `--json`:
 
 ```bash
-npm run --silent cli:alpha -- pay \
+npx jup-sh@alpha pay \
   --agent deepseek \
   --token SOL \
   --amount 20 \
@@ -181,12 +197,18 @@ The field-level contract is documented in
 
 For a fuller caller guide, see [Agent Integration](agent-integration.md).
 
-## 5. Test The Three Policy Outcomes
+## 6. Test The Three Policy Outcomes
+
+Trust the demo recipient first:
+
+```bash
+npx jup-sh@alpha policy trust jup-sh-demo
+```
 
 Auto-pay candidate with a trusted recipient and small amount:
 
 ```bash
-npm run cli:alpha -- pay \
+npx jup-sh@alpha pay \
   --agent deepseek \
   --token SOL \
   --amount 2 \
@@ -198,7 +220,7 @@ npm run cli:alpha -- pay \
 Review-required payment with the default policy:
 
 ```bash
-npm run cli:alpha -- pay \
+npx jup-sh@alpha pay \
   --agent deepseek \
   --token SOL \
   --amount 20 \
@@ -209,7 +231,7 @@ npm run cli:alpha -- pay \
 Rejected payment with an unsupported token:
 
 ```bash
-npm run cli:alpha -- pay \
+npx jup-sh@alpha pay \
   --agent deepseek \
   --token FAKE \
   --amount 20 \
@@ -217,10 +239,10 @@ npm run cli:alpha -- pay \
   --json
 ```
 
-## 6. Use Jupiter Quote-Only Mode
+## 7. Use Jupiter Quote-Only Mode
 
 ```bash
-npm run cli:alpha -- pay \
+npx jup-sh@alpha pay \
   --agent deepseek \
   --token SOL \
   --amount 20 \
@@ -248,30 +270,30 @@ JUPITER_API_KEY=...
 See [Jupiter Quote-Only Design](jupiter-quote-design.md) for the settlement
 boundary.
 
-## 7. Inspect Local Intents
+## 8. Inspect Local Intents
 
 List saved intents:
 
 ```bash
-npm run cli:alpha -- intent list
+npx jup-sh@alpha intent list
 ```
 
 Show one intent:
 
 ```bash
-npm run cli:alpha -- intent show intent_xxx
+npx jup-sh@alpha intent show intent_xxx
 ```
 
 Export a Risk Review URL:
 
 ```bash
-npm run cli:alpha -- intent export intent_xxx
+npx jup-sh@alpha intent export intent_xxx
 ```
 
 Or use the review shortcut:
 
 ```bash
-npm run cli:alpha -- review intent_xxx
+npx jup-sh@alpha review intent_xxx
 ```
 
 The exported URL contains a fragment payload:
@@ -283,7 +305,7 @@ https://jup.sh/pay/intent_xxx#intent=<base64url-json-payload>
 See [Risk Review Export Design](risk-review-export-design.md) for the static
 review model.
 
-## 8. Try The SDK Surface
+## 9. Try The SDK Surface
 
 The first TypeScript SDK surface is local and source-only:
 
@@ -448,7 +470,7 @@ console.log(explanation.recommendedAction);
 This is useful for agent logs, Risk Review, and local audit trails. It explains
 the existing `policyChecks`; it does not change the payment decision.
 
-## 8. Run The Release Gate
+## 10. Run The Release Gate
 
 Before a release checkpoint:
 

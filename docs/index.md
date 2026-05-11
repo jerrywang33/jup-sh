@@ -23,27 +23,17 @@ Policy decides when humans step in.
 
 ## 3-Minute Integration
 
-Install nothing globally. Start with `npx`:
+The homepage shows the short entry point:
 
 ```bash
 npx jup-sh@alpha init
-```
-
-Check the local workspace:
-
-```bash
 npx jup-sh@alpha doctor
 ```
 
-Trust a known API or vendor recipient:
+Then configure policy and create a payment intent:
 
 ```bash
 npx jup-sh@alpha policy trust api.vendor.example
-```
-
-Create an agent payment intent:
-
-```bash
 npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
 ```
 
