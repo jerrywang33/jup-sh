@@ -15,6 +15,42 @@ Recipients settle in USDC.
 Policy decides when humans step in.
 ```
 
+## 3-Minute Integration
+
+Install nothing globally. Start with `npx`:
+
+```bash
+npx jup-sh@alpha init
+```
+
+Trust a known API or vendor recipient:
+
+```bash
+npx jup-sh@alpha policy trust api.vendor.example
+```
+
+Create an agent payment intent:
+
+```bash
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
+```
+
+The output is a structured local payment intent. Agents should branch on:
+
+| Exit code | Decision | Meaning |
+| --- | --- | --- |
+| `0` | `auto_pay` | Inside local policy and ready for future authorization. |
+| `2` | `review_required` | Return or open the Risk Review URL. |
+| `1` | `rejected` | Stop the payment flow. |
+
+Current alpha boundary:
+
+```txt
+No signing. No custody. No swap execution.
+```
+
+The fastest path after this page is [Agent Integration](agent-integration.md).
+
 ## Read This First
 
 The docs are organized around the current engineering boundary:

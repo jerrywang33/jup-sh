@@ -76,7 +76,30 @@ policy or risk signals require it.
 
 ## Quickstart
 
-Install dependencies:
+Run the npm alpha:
+
+```bash
+npx jup-sh@alpha init
+npx jup-sh@alpha policy trust api.vendor.example
+npx jup-sh@alpha pay --agent deepseek --token SOL --amount 6 --settle USDC --recipient api.vendor.example --json
+```
+
+The CLI returns a structured local payment intent. Agents should branch on the
+exit code:
+
+```txt
+0 = auto_pay
+2 = review_required
+1 = rejected or command failure
+```
+
+Current alpha boundary:
+
+```txt
+No signing. No custody. No swap execution.
+```
+
+For source development, install dependencies:
 
 ```bash
 npm install
