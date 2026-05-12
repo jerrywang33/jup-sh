@@ -526,4 +526,4 @@ References to Jupiter are about using Jupiter API/routing as infrastructure.
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
